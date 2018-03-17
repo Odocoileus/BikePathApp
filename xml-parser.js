@@ -1,9 +1,9 @@
 'use strict';
-console.time("fetchXml");
-fetchXml(33.8124434, -84.43645699999999, 100);
-console.timeEnd("fetchXml");
 
-function fetchXml(lat1, lon1, maxDistance) { //Fetches the XML path coordinate file.
+fetchXml(33.8124434, -84.436457, 100);
+
+function fetchXml(lat1, lon1, maxDistance) { //Fetches the XML path coordinate 
+    //file.
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
@@ -18,9 +18,10 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
     //distance from point searched and nearest path, filters by path type
     //and nearest distance if user specifies, and returns the match(es).
     let xmlDoc = xml.responseXML;
-    let lineString = xmlDoc.getElementsByTagName("LineString");
-    let coordinateString;
-    for (let i = 0 ; i < lineString.length; i++) {
+    let lineString = xmlDoc.getElementsByTagName("LineString");//The parent
+    //element of the "coordinates" element containing the path.
+    let coordinateString;//Add each path to a string
+    for (let i = 0; i < lineString.length; i++) {
         if (i == 0) {
             coordinateString = lineString[i].childNodes[3].innerHTML;
         }
@@ -28,40 +29,41 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
             coordinateString += lineString[i].childNodes[3].innerHTML;
         }
     }
-    let normalizedString = coordinateString.replace(/,0/g, ",");//Finding and replacing ",0"
+    let normalizedString = coordinateString.replace(/,0/g, ",");//Finding and
+    //replacing ",0"
     let coordinateArray = normalizedString.split(",").map(function(s) {
             s.trim();//Trim whitespace
             s = parseFloat(s);//Convert to float
             return s;
         });
-    let distanceArray = [];
+    let distanceArray = [];//This array holds all distances from the point
+    //to all points along the paths.
     for (let i = 0, j = 0; i < (coordinateArray.length - 2); i += 2, j++) {
-        distanceArray[j] = getDistance(lat1, lon1, coordinateArray[i+1], coordinateArray[i]);
-        
+        distanceArray[j] = getDistance(lat1, lon1, coordinateArray[i+1], 
+            coordinateArray[i]);
+        //Since Google Maps exports KML with longitude first on each point,
+        //the coordinate array is accessed "backwards".
     }
-    let minDistance = Math.min.apply(Math, distanceArray);
-    let minDistanceIndex = distanceArray.indexOf(Math.min.apply(Math, distanceArray));
+    let minDistance = Math.min.apply(Math, distanceArray);//Smallest distance.
+    let minDistanceIndex = distanceArray.indexOf(Math.min.apply(Math, 
+        distanceArray));//Index of smallest distance.
     let matchObject = {};
     if (minDistance > maxDistance) { 
-        matchObject.noMatches;
+        matchObject.noMatches;//Property will be checked for truthiness/
     }
     else if (minDistance < maxDistance) {
-        /*console.log("closest distance is " + minDistance.toFixed(4) + 
-            "km at coordinates " + coordinateArray[minDistanceIndex + 1] + 
-            ", " + coordinateArray[minDistanceIndex]);*/
         matchObject.closest = minDistance;
         matchObject.lat = coordinateArray[minDistanceIndex + 1];
         matchObject.lon = coordinateArray[minDistanceIndex];
     }
     else {
-        matchObject.err = true;
+        matchObject.err;//Property will be checked for truthiness.
     }
     return matchObject;
 }
 
-function getDistance(lat1, lon1, lat2, lon2) {//Uses distance function to return distance from point
-    //specified from each point on specified path
-    
+function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
+    //return distance from point specified from each point on specified path
     const R = 6371; //Radius of earth in km
     let x1 = lat2-lat1;
     let dLat = x1.toRad();  
@@ -78,51 +80,11 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses distance function to return
 Number.prototype.toRad = function () {
     return this * Math.PI / 180;
     }
-
 /*
-let closestLat;
-    let closestLon;
-    let closestMaxDistance;
-    //____ Coordinate Array ____
-    let xmlDoc = xml.responseXML;
-    let coordinateArray = [];
-    let coordinateObject = xmlDoc.getElementsByTagName("coordinates");
-    for (let i = 0; i < coordinateObject.length; i++) {
-        let coordinateString = xmlDoc.getElementsByTagName("coordinates")[i]
-            .childNodes[0].nodeValue; //This returns a string of the coordinates on the path.
-        let normalizedString = coordinateString.replace(/,0/g, ",");//Finding and replacing ",0"
-        coordinateArray = normalizedString.split(",").map(function(s) {
-            s.trim();//Trim whitespace
-            s = parseFloat(s);//Convert to float
-            coordinateArray[i] += s;
-        });
-        console.log(coordinateArray);
-        for(let i = 0; i < coordinateArray.length; i+=3){
-            let currentDistance = getDistance(lat1, lon1, parseFloat(coordinateArray[i]), parseFloat(coordinateArray[i+1])); 
-            console.log(parseFloat(coordinateArray[i]) + " " + parseFloat(coordinateArray[i+1]));
-            console.log("Current Distance: " + currentDistance);
-            if(i == 0 || currentDistance < closestMaxDistance) {
-                closestLat = coordinateArray[i];
-                closestLon = coordinateArray[i+1];
-                closestMaxDistance = currentDistance;
-                console.log("Found Closer Distance: " + closestMaxDistance);
-            }
-        }
-
-    }
-    console.log("passed - full array: " + typeof(coordinateArray));*/
-
-
-
-
-/*
-{ 
--function is given the coordinate array
--use .map to create an array of the difference between each set of points
--use math.min to find smallest difference, corresponding array index is the index of closest match.
--use this function as the callback of the haversine function,
-}
-
+-if there is no destination specified, the directions end at the nearest path
+-if there is a destination, the directions stick strictly to the paths
+    -if there is a break or an intersection, find path within reasonable distance
+    
 */
 
 
