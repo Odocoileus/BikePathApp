@@ -1,5 +1,12 @@
 'use strict';
 
+require('module');
+
+module.exports = {
+    fetch: fetchXml(),
+    distance: getDistance()
+}
+
 fetchXml(33.8124434, -84.436457, 100);
 
 function fetchXml(lat1, lon1, maxDistance) { //Fetches the XML path coordinate 
@@ -41,7 +48,7 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
     for (let i = 0, j = 0; i < (coordinateArray.length - 2); i += 2, j++) {
         distanceArray[j] = getDistance(lat1, lon1, coordinateArray[i+1], 
             coordinateArray[i]);
-        //Since Google Maps exports KML with longitude first on each point,
+        //Since Google Maps exports KML with longitude first on each pair,
         //the coordinate array is accessed "backwards".
     }
     let minDistance = Math.min.apply(Math, distanceArray);//Smallest distance.
@@ -49,7 +56,7 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
         distanceArray));//Index of smallest distance.
     let matchObject = {};
     if (minDistance > maxDistance) { 
-        matchObject.noMatches;//Property will be checked for truthiness/
+        matchObject.noMatches;//Property will be checked for truthiness.
     }
     else if (minDistance < maxDistance) {
         matchObject.closest = minDistance;
@@ -64,6 +71,9 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
 
 function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     //return distance from point specified from each point on specified path
+    Number.prototype.toRad = function () {
+    return this * Math.PI / 180;
+    }
     const R = 6371; //Radius of earth in km
     let x1 = lat2-lat1;
     let dLat = x1.toRad();  
@@ -83,7 +93,48 @@ Number.prototype.toRad = function () {
 /*
 -if there is no destination specified, the directions end at the nearest path
 -if there is a destination, the directions stick strictly to the paths
-    -if there is a break or an intersection, find path within reasonable distance
+    -if there is a break, find path within maxDistance
+    -use djikstra's algorithm to find shortest path between nodes
+        -find the index of nodes on coordinate array
+    -plot path on map
+    -23 waypoints is okay
+    -If there is a break, navigate to the end, the alert the user to use 
+        walking directions to the next path
+-for each path, search along all paths to find the pairs of coordinates are true for intersection
+    -convert all cooridnates to x,y through NCAT
+        -parse through xml to format to multipoint
+        -search through each pair of lines? sounds inefficient. It'd take a long time
+            -would need to keep lines separate
+            -unique IDs
+            -
+        -search is performed by Java Line2D
+        -intersections are given to intersection finder function
+        -each intersection is given back to NCAT to convert to lat/lon
+        
+*/
+
+/* ARRAY MATCH SEARCH 
+(function () {
+    for (let i = 0; i < (coordinateArray.length - 2); i += 2)  {
+        if (
+            (coordinateArray.indexOf(coordinateArray[i], i+1)) != -1 &&
+            (coordinateArray.indexOf(coordinateArray[i+1], i+2)) != -1
+           ) {
+            console.log(coordinateArray[i] + ", " +
+                        coordinateArray[i+1] + " and, " +
+                        coordinateArray[coordinateArray.indexOf(coordinateArray[i], i+1)] + ", " + coordinateArray[coordinateArray.indexOf(coordinateArray[i+1], i+2)] + 
+                        " first pair: " + coordinateArray.indexOf(coordinateArray[i]) + ", " + coordinateArray.indexOf(coordinateArray[i+1]) + " second pair: " +
+                        coordinateArray.indexOf(coordinateArray[i], i+1) + ", " + coordinateArray.indexOf(coordinateArray[i+1], i+2));
+        }
+     }
+    })();
+    
+    (function () {
+        for (let i = 0; i < (coordinateArray.length - 2); i += 2) {
+            console.log(getDistance(coordinateArray[i+1], coordinateArray[i],
+                                    coordinateArray[i+3], coordinateArray[i+2]));
+        }
+    })();
     
 */
 
