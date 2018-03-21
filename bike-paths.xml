@@ -136,7 +136,7 @@
         <name>Directions from Bike Lane 78 to 125 Ponce De Leon Ave NE, Atlanta, GA 30308, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
-          <tessellate>166666</tessellate>
+          <tessellate>1</tessellate>
           <coordinates>
             -84.36439,33.7734,0
             -84.36458,33.77335,0

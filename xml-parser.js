@@ -1,12 +1,5 @@
 'use strict';
 
-require('module');
-
-module.exports = {
-    fetch: fetchXml(),
-    distance: getDistance()
-}
-
 fetchXml(33.8124434, -84.436457, 100);
 
 function fetchXml(lat1, lon1, maxDistance) { //Fetches the XML path coordinate 

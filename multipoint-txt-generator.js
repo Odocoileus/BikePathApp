@@ -8,10 +8,10 @@ function fetchXml() { //Fetches the XML path coordinate
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            findClosest().discretePaths();
+            discretePaths(this);
         }
     };
-    xmlhttp.open("GET", "bike-paths.xml", true);
+    xmlhttp.open("GET", "short.xml", true);
     xmlhttp.send();
 }
 
@@ -36,14 +36,31 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             });
         pathsArray[i] = coordinateArray;
     }
-    return {
-        pathsArray: pathsArray
+    //let matchesArray = []; //Array that will hold match objects
+    for (let i = 0; i < pathsArray.length; i++) {
+        let path = pathsArray[i];
+        
+        for (let j = 0; j < (path.length - 1); j+=2) {
+            let lat = path[j+1];
+            let lon = path[j];
+            
+            for (let k = 0, m = 0; m < 1000 || k < pathsArray.length; k++, m++) {
+                let path2 = pathsArray[k];
+                console.log(i + " " + k);
+                /*if (k = i) {
+                    k++;
+                }
+                else {
+                    for (let l = 0; l < (path2.length - 1); l+=2) {
+                        let lat2 = path2[l+1];
+                        let lon2 = path2[l];
+                        if((getDistance(lat, lon, lat2, lon2) < .05)) {
+                           console.log(lat + " " + lon + " " + lat2 + " " + lon2);
+                        }*/
+                    
+            }
+        }
     }
-}
-
-function findClosest(callback) {
-    let self = this;
-    console.log(pathsArray);
 }
 
 function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
