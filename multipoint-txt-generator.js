@@ -11,7 +11,7 @@ function fetchXml() { //Fetches the XML path coordinate
             discretePaths(this);
         }
     };
-    xmlhttp.open("GET", "short.xml", true);
+    xmlhttp.open("GET", "bike-paths.xml", true);
     xmlhttp.send();
 }
 
@@ -36,6 +36,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             });
         pathsArray[i] = coordinateArray;
     }
+    console.log(pathsArray);
     //let matchesArray = []; //Array that will hold match objects
     for (let i = 0; i < pathsArray.length; i++) {
         let path = pathsArray[i];
@@ -44,20 +45,24 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             let lat = path[j+1];
             let lon = path[j];
             
-            for (let k = 0, m = 0; m < 1000 || k < pathsArray.length; k++, m++) {
+            for (let k = 0; k < pathsArray.length;) {
                 let path2 = pathsArray[k];
-                console.log(i + " " + k);
-                /*if (k = i) {
+            
+                if (k == i) {
                     k++;
                 }
                 else {
                     for (let l = 0; l < (path2.length - 1); l+=2) {
                         let lat2 = path2[l+1];
                         let lon2 = path2[l];
+                        console.log("[" + i + "]" + "[" + j + "]");
+                        console.log("[" + k + "]" + "[" + l + "]");
                         if((getDistance(lat, lon, lat2, lon2) < .05)) {
-                           console.log(lat + " " + lon + " " + lat2 + " " + lon2);
-                        }*/
-                    
+                           console.log(lat + ", " + lon + " " + lat2 + ", " + lon2);
+                        }
+                    }
+                    k++;
+                }
             }
         }
     }
@@ -79,4 +84,8 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     let distance = R * c; 
     return distance; //Distance between points(km)
+}
+
+Number.prototype.toRad = function () {
+    return this * Math.PI / 180;
 }
