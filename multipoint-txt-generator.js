@@ -27,8 +27,8 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
     for (let i = 0; i < lineString.length; i++) {
         let coordinateString;//Add each path to a string
         coordinateString = lineString[i].childNodes[3].innerHTML;
-        let normalizedString = coordinateString.replace(/,0/g, ",");//Finding and
-        //replacing ",0"
+        let normalizedString = coordinateString.replace(/,0/g, ",");//Finding 
+        //and replacing ",0"
         let coordinateArray = normalizedString.split(",").map(function(s) {
             s.trim();//Trim whitespace
             s = parseFloat(s);//Convert to float
@@ -42,9 +42,12 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
         let path = pathsArray[i];
         
         for (let j = 0; j < (path.length - 1); j+=2) {
-            let lat = path[j+1];
-            let lon = path[j];
-            
+            let p1 = new Object(), p2 = new Object();
+            p1.lat = path[j+1];
+            p1.lon = path[j];
+            p2.lat = path[j+3];
+            p2.lon = path[j+2];
+                
             for (let k = 0; k < pathsArray.length;) {
                 let path2 = pathsArray[k];
             
@@ -52,13 +55,25 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                     k++;
                 }
                 else {
-                    for (let l = 0; l < (path2.length - 1); l+=2) {
-                        let lat2 = path2[l+1];
-                        let lon2 = path2[l];
-                        console.log("[" + i + "]" + "[" + j + "]");
-                        console.log("[" + k + "]" + "[" + l + "]");
-                        if((getDistance(lat, lon, lat2, lon2) < .05)) {
-                           console.log(lat + ", " + lon + " " + lat2 + ", " + lon2);
+                    for (let l = 0; l < (path2.length - 4); l+=2) {
+                        let p3 = new Object(), p4 = new Object();
+                        p3.lat = path2[l+1];
+                        p3.lon = path2[l];
+                        p4.lat = path2[l+3];
+                        p4.lon = path2[l+2];
+//                        console.log(p4.lat + " " + p4.lon);
+//                        console.log(p1.lat + " " + p1.lon + " " + p4.lat + " " + p4.lon);
+                        /*if(typeof(p4.lat) && typeof(p4.lon) == "undefined") {
+                            console.log("yeh");
+                        }*/
+                        
+                        if(isIntersect(p1, p2, p3, p4) == true) {
+                            console.log(p1.lat + " " + p1.lon + " " +
+                                        p2.lat + " " + p2.lon + " " +
+                                        p3.lat + " " + p3.lon + " " +
+                                        p4.lat + " " + p4.lon
+                                       );
+                            findIntersect(p1, p2, p3, p4);
                         }
                     }
                     k++;
@@ -73,6 +88,7 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     Number.prototype.toRad = function () {
     return this * Math.PI / 180;
     }
+    
     const R = 6371; //Radius of earth in km
     let x1 = lat2-lat1;
     let dLat = x1.toRad();  
@@ -86,6 +102,37 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     return distance; //Distance between points(km)
 }
 
-Number.prototype.toRad = function () {
-    return this * Math.PI / 180;
+function Turn(p1, p2, p3) {
+    let a = p1.lon; 
+    let b = p1.lat; 
+    let c = p2.lon;
+    let d = p2.lat;
+    let e = p3.lon;
+    let f = p3.lat;
+    let A = (f - b) * (c - a);
+    let B = (d - b) * (e - a);
+    return (A > B + Number.EPSILON) ? 1 : (A + Number.EPSILON < B) ? -1 : 0;
+}
+
+function isIntersect(p1, p2, p3, p4) {
+    return (Turn(p1, p3, p4) != Turn(p2, p3, p4)) && (Turn(p1, p2, p3) != Turn(p1, p2, p4));
+}
+
+function findIntersect(p1, p2, p3, p4) {
+    var XAsum = p1.lon - p2.lon;
+    var XBsum = p3.lon - p4.lon;
+    var YAsum = p1.lat - p2.lat;
+    var YBsum = p3.lat - p4.lat;
+
+    var LineDenominator = XAsum * YBsum - YAsum * XBsum;
+    if(LineDenominator == 0.0) {
+        return false;
+    }
+
+    var a = p1.lon * p2.lat - p1.lat * p2.lon;
+    var b = p3.lon * p4.lat - p3.lat * p4.lon;
+
+    var x = (a * XBsum - b * XAsum) / LineDenominator;
+    var y = (a * YBsum - b * YAsum) / LineDenominator;
+    console.log(y + ", " + x);
 }
