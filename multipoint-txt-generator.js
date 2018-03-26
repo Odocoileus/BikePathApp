@@ -34,6 +34,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             s = parseFloat(s);//Convert to float
             return s;
             });
+        coordinateArray.pop();
         pathsArray[i] = coordinateArray;
     }
     console.log(pathsArray);
@@ -50,10 +51,11 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                 
             for (let k = 0; k < pathsArray.length;) {
                 let path2 = pathsArray[k];
-            
+                let lastIntersection = new Object();
                 if (k == i) {
                     k++;
                 }
+                
                 else {
                     for (let l = 0; l < (path2.length - 4); l+=2) {
                         let p3 = new Object(), p4 = new Object();
@@ -61,20 +63,20 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                         p3.lon = path2[l];
                         p4.lat = path2[l+3];
                         p4.lon = path2[l+2];
-//                        console.log(p4.lat + " " + p4.lon);
-//                        console.log(p1.lat + " " + p1.lon + " " + p4.lat + " " + p4.lon);
-                        /*if(typeof(p4.lat) && typeof(p4.lon) == "undefined") {
-                            console.log("yeh");
-                        }*/
-                        
-                        if(isIntersect(p1, p2, p3, p4) == true) {
-                            console.log(p1.lat + " " + p1.lon + " " +
-                                        p2.lat + " " + p2.lon + " " +
-                                        p3.lat + " " + p3.lon + " " +
-                                        p4.lat + " " + p4.lon
-                                       );
-                            findIntersect(p1, p2, p3, p4);
+                        if(isIntersect(p1, p2, p3, p4) === true) {
+                            let newIntersection = findIntersect(p1, p2, p3, p4);
+                            console.log(newIntersection.lat);
+                            lastIntersection = newIntersection;
+                            if ((getDistance(lastIntersection.lat, 
+                                                    lastIntersection.lon,
+                                                    newIntersection.lat,
+                                                    newIntersection.lon))
+                               > .1) {
+                                lastIntersection = newIntersection;
+                            }
+//                            console.log(lastIntersection);
                         }
+//                        console.log(lastIntersection.lat + " " + lastIntersection.lon);
                     }
                     k++;
                 }
@@ -134,5 +136,11 @@ function findIntersect(p1, p2, p3, p4) {
 
     var x = (a * XBsum - b * XAsum) / LineDenominator;
     var y = (a * YBsum - b * YAsum) / LineDenominator;
-    console.log(y + ", " + x);
+    let intersection = new Object();
+    intersection.lat = y, intersection.lon = x;
+    return intersection;
+}
+
+Number.prototype.toRad = function () {
+    return this * Math.PI / 180;
 }

@@ -131,7 +131,7 @@
       </Placemark>
     </Folder>
     <Folder>
-      <name>bike-lane</name>
+      <name>Directions from Bike Lane 78 to 125 Ponce De Leon Ave NE, Atlanta, GA 30308, USA</name>
       <Placemark>
         <name>Directions from Bike Lane 78 to 125 Ponce De Leon Ave NE, Atlanta, GA 30308, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
@@ -216,7 +216,7 @@
             -84.38261,33.77245,0
             -84.38295,33.77243,0
             -84.38308,33.77243,0
-            -84.38316,33.77242,0
+            -84.38331,33.77242,0
           </coordinates>
         </LineString>
       </Placemark>
@@ -234,7 +234,7 @@
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3831563,33.772423,0
+            -84.3833057,33.7724184,0
           </coordinates>
         </Point>
       </Placemark>
@@ -392,6 +392,129 @@
         <Point>
           <coordinates>
             -84.3655411,33.7544277,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Directions from Point 1 to Point 2</name>
+      <Placemark>
+        <name>Directions from Point 1 to Point 2</name>
+        <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -84.36098,33.77435,0
+            -84.36098,33.77426,0
+            -84.36098,33.77396,0
+            -84.36098,33.77381,0
+            -84.36099,33.7737,0
+            -84.36099,33.77331,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Point 1</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3609835,33.7743494,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Point 2</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3609883,33.7733059,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Directions from Point 1 to Point 2</name>
+      <Placemark>
+        <name>Directions from Point 1 to Point 2</name>
+        <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -84.36147,33.77381,0
+            -84.36132,33.77381,0
+            -84.36098,33.77381,0
+            -84.36054,33.77381,0
+            -84.36049,33.77381,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Point 1</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3614736,33.773811,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Point 2</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3604892,33.7738095,0
+          </coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>Directions from Point 1 to Point 2</name>
+      <Placemark>
+        <name>Directions from Point 1 to Point 2</name>
+        <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -84.36957,33.77116,0
+            -84.36938,33.77116,0
+            -84.36894,33.77115,0
+            -84.36848,33.77114,0
+            -84.36841,33.77114,0
+            -84.3677,33.77113,0
+            -84.36723,33.77113,0
+            -84.36678,33.77113,0
+            -84.36642,33.77113,0
+            -84.36617,33.77112,0
+            -84.36589,33.77112,0
+            -84.3658,33.77112,0
+            -84.36568,33.77112,0
+            -84.36534,33.77112,0
+            -84.36506,33.77111,0
+            -84.36502,33.77112,0
+            -84.3644,33.77113,0
+            -84.36398,33.77113,0
+            -84.36392,33.77113,0
+            -84.36391,33.77113,0
+            -84.36355,33.77113,0
+            -84.36322,33.77113,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Point 1</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3695658,33.7711556,0
+          </coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>Point 2</name>
+        <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
+        <Point>
+          <coordinates>
+            -84.3632197,33.77113,0
           </coordinates>
         </Point>
       </Placemark>
