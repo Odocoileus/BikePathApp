@@ -34,56 +34,68 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             s = parseFloat(s);//Convert to float
             return s;
             });
-        coordinateArray.pop();
+        coordinateArray.pop(); //Removing "NaN"
         pathsArray[i] = coordinateArray;
     }
     console.log(pathsArray);
-    //let matchesArray = []; //Array that will hold match objects
+    let matchesArray = []; //Array that will hold match objects
+    let lastIntersection; //Last match
     for (let i = 0; i < pathsArray.length; i++) {
         let path = pathsArray[i];
         
-        for (let j = 0; j < (path.length - 1); j+=2) {
+        for (let j = 0; j < path.length; j+=2) {
             let p1 = new Object(), p2 = new Object();
             p1.lat = path[j+1];
             p1.lon = path[j];
             p2.lat = path[j+3];
             p2.lon = path[j+2];
-                
-            for (let k = 0; k < pathsArray.length;) {
+            
+//            console.log(i + " " + j + " " + path[j+1] + " " + path[j]);
+            for (let k = 0; k < pathsArray.length; k++) {
                 let path2 = pathsArray[k];
-                let lastIntersection = new Object();
                 if (k == i) {
-                    k++;
+                    continue;
                 }
                 
                 else {
-                    for (let l = 0; l < (path2.length - 4); l+=2) {
+                    for (let l = 0; l < path2.length; l+=2) {
                         let p3 = new Object(), p4 = new Object();
                         p3.lat = path2[l+1];
                         p3.lon = path2[l];
                         p4.lat = path2[l+3];
                         p4.lon = path2[l+2];
+                        //console.log(path[j+1] + " " + path[j] + " " + path[j+3] + " " + path[j+2]
+                                   // + " " + path2[l+1] + " " + path2[l] + " " + path2[l+3] + " " + path2[l+2] );
+//                        console.log(i + " " + j + " " + k + " " + l);
                         if(isIntersect(p1, p2, p3, p4) === true) {
                             let newIntersection = findIntersect(p1, p2, p3, p4);
-                            console.log(newIntersection.lat);
-                            lastIntersection = newIntersection;
-                            if ((getDistance(lastIntersection.lat, 
+                            if (typeof lastIntersection === 'undefined') { 
+                                lastIntersection = newIntersection
+                                continue;
+                            }
+                            else if ((getDistance(
+                                                    lastIntersection.lat, 
                                                     lastIntersection.lon,
                                                     newIntersection.lat,
                                                     newIntersection.lon))
                                > .1) {
                                 lastIntersection = newIntersection;
+                                matchesArray.push(lastIntersection);
                             }
-//                            console.log(lastIntersection);
+                            
                         }
-//                        console.log(lastIntersection.lat + " " + lastIntersection.lon);
+//                            console.log(lastIntersection);
                     }
-                    k++;
+//                        console.log(lastIntersection.lat + " " + lastIntersection.lon);
                 }
             }
         }
     }
+    for(let i = 0; i < matchesArray.length; i++) {
+        matchesArray[i] 
+    }
 }
+
 
 function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     //return distance from point specified from each point on specified path
