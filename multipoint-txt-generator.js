@@ -1,5 +1,7 @@
 'use strict';
 
+//let fs = require("fs");
+
 fetchXml();
 
 function fetchXml() { //Fetches the XML path coordinate 
@@ -38,7 +40,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
         pathsArray[i] = coordinateArray;
     }
     console.log(pathsArray);
-    let matchesArray = []; //Array that will hold match objects
+    let matchesArray = [], noDuplicateArray = []; //Array that will hold matches
     let lastIntersection; //Last match
     for (let i = 0; i < pathsArray.length; i++) {
         let path = pathsArray[i];
@@ -70,7 +72,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                         if(isIntersect(p1, p2, p3, p4) === true) {
                             let newIntersection = findIntersect(p1, p2, p3, p4);
                             if (typeof lastIntersection === 'undefined') { 
-                                lastIntersection = newIntersection
+                                lastIntersection = newIntersection;
                                 continue;
                             }
                             else if ((getDistance(
@@ -80,23 +82,25 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                                                     newIntersection.lon))
                                > .1) {
                                 lastIntersection = newIntersection;
-                                matchesArray.push(lastIntersection);
+                                matchesArray.push(lastIntersection.lat);
+                                matchesArray.push(lastIntersection.lon);
                             }
-                            
                         }
-//                            console.log(lastIntersection);
                     }
-//                        console.log(lastIntersection.lat + " " + lastIntersection.lon);
                 }
             }
         }
     }
-    for(let i = 0; i < matchesArray.length; i++) {
-        matchesArray[i] 
-    }
+    noDuplicateArray = Array.from(new Set(matchesArray)); //Set removes duplicates from array
+    console.log(noDuplicateArray);
 }
 
-
+function writeJson(arr) {
+    let intersectionObject = {};
+    for (let i = 0; i < arr.length; i+=2) {
+        
+    }
+}
 function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     //return distance from point specified from each point on specified path
     Number.prototype.toRad = function () {
@@ -156,3 +160,33 @@ function findIntersect(p1, p2, p3, p4) {
 Number.prototype.toRad = function () {
     return this * Math.PI / 180;
 }
+
+/*for(let i = 0; i < matchesArray.length; i++) {
+    let duplicateBool = (function () {
+        for(let j = 0; j < matchesArray.length; j++) {
+//                            console.log(i + " " + j);
+            if (i == j) { j++; }
+            if(matchesArray[i].lat == matchesArray[j].lat && matchesArray[i]
+            .lon == matchesArray[j].lon) {
+                return true;
+            }
+        }
+    })();
+//        console.log(duplicateBool);
+//        console.log(previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lat);
+    if(duplicateBool != true) {
+        noDuplicateArray.push(matchesArray[i]);
+    }
+    else if(duplicateBool == true) {
+        noDuplicateArray.push(matchesArray[i]);
+        previousDuplicates.push(matchesArray[i]);
+    }
+    else if(duplicateBool == true && typeof previousDuplicates[0] != 'undefined' &&  matchesArray[i].lat == 
+            previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lat &&
+            matchesArray[i].lon == previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lon) {
+        console.log("match");
+        continue;
+    }
+
+console.log(noDuplicateArray);
+}*/
