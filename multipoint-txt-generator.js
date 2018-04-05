@@ -1,3 +1,6 @@
+/*
+
+*/
 'use strict';
 
 //let fs = require("fs");
@@ -6,7 +9,6 @@ fetchXml();
 
 function fetchXml() { //Fetches the XML path coordinate 
     //file.
-    let self = this;
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
@@ -19,31 +21,67 @@ function fetchXml() { //Fetches the XML path coordinate
 
 function discretePaths(xml) { //Parses the XML, returns an array of arrays 
     //containing path coordinates
-    //EACH ARRAY COULD HAVE ROAD NAME ASSOCIATED
-        //directions computed from here, google API only used for walking 
-        //directions and travel times
     let xmlDoc = xml.responseXML;
     let lineString = xmlDoc.getElementsByTagName("LineString");//The parent
     //element of the "coordinates" element containing the path.
     let pathsArray = [];
+    let pathTypeParent = xmlDoc.getElementsByTagName("Document");
+    let pathType = pathTypeParent[0].childNodes[1].innerHTML;
     for (let i = 0; i < lineString.length; i++) {
         let coordinateString;//Add each path to a string
         coordinateString = lineString[i].childNodes[3].innerHTML;
-        let normalizedString = coordinateString.replace(/,0/g, ",");//Finding 
-        //and replacing ",0"
+        let normalizedString = coordinateString.replace(/,0/g, ",");//Replacing ",0"
         let coordinateArray = normalizedString.split(",").map(function(s) {
-            s.trim();//Trim whitespace
-            s = parseFloat(s);//Convert to float
+            s.trim();
+            s = parseFloat(s);
             return s;
             });
+//        coordinateArray[0] = pathType;
         coordinateArray.pop(); //Removing "NaN"
         pathsArray[i] = coordinateArray;
     }
     console.log(pathsArray);
-    let matchesArray = [], noDuplicateArray = []; //Array that will hold matches
-    let lastIntersection; //Last match
-    for (let i = 0; i < pathsArray.length; i++) {
-        let path = pathsArray[i];
+    let intersectionsArray = pathsArray.findIntersections().filterDuplicates();/*.removeExtraStrings();*/
+    console.log(intersectionsArray);
+    let test = ["q",5,5,"q","q","q","q","rr",5,5,"q",5,5,"q","q",5,5,"q"];
+    let test2 = test.removeExtraStrings();
+    console.log(test2);
+    console.log(test == test2);
+}
+
+Array.prototype.removeExtraStrings = function() {
+    let self = this;
+    for (let i = 0; i < self.length;) {
+        if(i !== 0 && typeof self[i+1] !== 'number') {
+            let start = i, end = i;
+            while(typeof self[end] === 'string') {
+                end++;
+                console.log(end);
+            }
+            while(start < (end - 1)) {
+                self[start] = undefined;
+                start++;
+            }
+            i = end;
+            console.log("end " + end);
+            continue;
+        }
+        i += 3;
+    }
+    return self;
+}
+
+
+Array.prototype.filterDuplicates = function() {
+    let self = this, returnArray;
+    returnArray = Array.from(new Set(self))
+    return returnArray;
+}
+
+Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
+    let matchesArray = [], lastIntersection; //Last match
+    for (let i = 0; i < this.length; i++) {
+        let path = this[i];
         
         for (let j = 0; j < path.length; j+=2) {
             let p1 = new Object(), p2 = new Object();
@@ -52,13 +90,12 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             p2.lat = path[j+3];
             p2.lon = path[j+2];
             
-//            console.log(i + " " + j + " " + path[j+1] + " " + path[j]);
-            for (let k = 0; k < pathsArray.length; k++) {
-                let path2 = pathsArray[k];
+            for (let k = 0; k < this.length; k++) {
+                let path2 = this[k];
+                
                 if (k == i) {
                     continue;
                 }
-                
                 else {
                     for (let l = 0; l < path2.length; l+=2) {
                         let p3 = new Object(), p4 = new Object();
@@ -66,9 +103,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                         p3.lon = path2[l];
                         p4.lat = path2[l+3];
                         p4.lon = path2[l+2];
-                        //console.log(path[j+1] + " " + path[j] + " " + path[j+3] + " " + path[j+2]
-                                   // + " " + path2[l+1] + " " + path2[l] + " " + path2[l+3] + " " + path2[l+2] );
-//                        console.log(i + " " + j + " " + k + " " + l);
+                        
                         if(isIntersect(p1, p2, p3, p4) === true) {
                             let newIntersection = findIntersect(p1, p2, p3, p4);
                             if (typeof lastIntersection === 'undefined') { 
@@ -82,25 +117,26 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
                                                     newIntersection.lon))
                                > .1) {
                                 lastIntersection = newIntersection;
-                                matchesArray.push(lastIntersection.lat);
-                                matchesArray.push(lastIntersection.lon);
+//                                matchesArray.push(path[0] + i + path2[0] + k);
+//                                matchesArray.push(parseFloat(lastIntersection.lat.toFixed(5)), parseFloat(lastIntersection.lon.toFixed(5)));
+                                matchesArray.push(lastIntersection.lat, lastIntersection.lon);
                             }
                         }
-                    }
+                    }//fourth
                 }
-            }
-        }
-    }
-    noDuplicateArray = Array.from(new Set(matchesArray)); //Set removes duplicates from array
-    console.log(noDuplicateArray);
+            }//third
+        }//second
+    } //first 
+    return matchesArray;
 }
 
-function writeJson(arr) {
-    let intersectionObject = {};
-    for (let i = 0; i < arr.length; i+=2) {
-        
-    }
-}
+//function writeJson(arr) {
+//    let intersectionObject = {};
+//    for (let i = 0; i < arr.length; i+=2) {
+//        
+//    }
+//}
+
 function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     //return distance from point specified from each point on specified path
     Number.prototype.toRad = function () {
@@ -137,21 +173,21 @@ function isIntersect(p1, p2, p3, p4) {
 }
 
 function findIntersect(p1, p2, p3, p4) {
-    var XAsum = p1.lon - p2.lon;
-    var XBsum = p3.lon - p4.lon;
-    var YAsum = p1.lat - p2.lat;
-    var YBsum = p3.lat - p4.lat;
+    let XAsum = p1.lon - p2.lon;
+    let XBsum = p3.lon - p4.lon;
+    let YAsum = p1.lat - p2.lat;
+    let YBsum = p3.lat - p4.lat;
 
-    var LineDenominator = XAsum * YBsum - YAsum * XBsum;
+    let LineDenominator = XAsum * YBsum - YAsum * XBsum;
     if(LineDenominator == 0.0) {
         return false;
     }
 
-    var a = p1.lon * p2.lat - p1.lat * p2.lon;
-    var b = p3.lon * p4.lat - p3.lat * p4.lon;
+    let a = p1.lon * p2.lat - p1.lat * p2.lon;
+    let b = p3.lon * p4.lat - p3.lat * p4.lon;
 
-    var x = (a * XBsum - b * XAsum) / LineDenominator;
-    var y = (a * YBsum - b * YAsum) / LineDenominator;
+    let x = (a * XBsum - b * XAsum) / LineDenominator;
+    let y = (a * YBsum - b * YAsum) / LineDenominator;
     let intersection = new Object();
     intersection.lat = y, intersection.lon = x;
     return intersection;
@@ -160,33 +196,3 @@ function findIntersect(p1, p2, p3, p4) {
 Number.prototype.toRad = function () {
     return this * Math.PI / 180;
 }
-
-/*for(let i = 0; i < matchesArray.length; i++) {
-    let duplicateBool = (function () {
-        for(let j = 0; j < matchesArray.length; j++) {
-//                            console.log(i + " " + j);
-            if (i == j) { j++; }
-            if(matchesArray[i].lat == matchesArray[j].lat && matchesArray[i]
-            .lon == matchesArray[j].lon) {
-                return true;
-            }
-        }
-    })();
-//        console.log(duplicateBool);
-//        console.log(previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lat);
-    if(duplicateBool != true) {
-        noDuplicateArray.push(matchesArray[i]);
-    }
-    else if(duplicateBool == true) {
-        noDuplicateArray.push(matchesArray[i]);
-        previousDuplicates.push(matchesArray[i]);
-    }
-    else if(duplicateBool == true && typeof previousDuplicates[0] != 'undefined' &&  matchesArray[i].lat == 
-            previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lat &&
-            matchesArray[i].lon == previousDuplicates[previousDuplicates.indexOf(matchesArray[i])].lon) {
-        console.log("match");
-        continue;
-    }
-
-console.log(noDuplicateArray);
-}*/
