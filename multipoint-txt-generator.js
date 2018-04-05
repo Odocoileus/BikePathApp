@@ -36,34 +36,35 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             s = parseFloat(s);
             return s;
             });
-//        coordinateArray[0] = pathType;
+        coordinateArray[0] = pathType;
         coordinateArray.pop(); //Removing "NaN"
         pathsArray[i] = coordinateArray;
     }
     console.log(pathsArray);
-    let intersectionsArray = pathsArray.findIntersections().filterDuplicates();/*.removeExtraStrings();*/
+    let intersectionsArray = pathsArray.findIntersections()/*.filterDuplicates().removeExtraStrings().filterDuplicates();*/
     console.log(intersectionsArray);
-    let test = ["q",5,5,"q","q","q","q","rr",5,5,"q",5,5,"q","q",5,5,"q"];
-    let test2 = test.removeExtraStrings();
-    console.log(test2);
-    console.log(test == test2);
+//    let test = ["q",5,5,"q","q","q","q","rr",5,5,"q",5,5,"q","q",5,5,"q"];
+//    let test2 = test.removeExtraStrings();
+//    console.log(test2);
+//    console.log(test == test2);
 }
 
 Array.prototype.removeExtraStrings = function() {
     let self = this;
     for (let i = 0; i < self.length;) {
-        if(i !== 0 && typeof self[i+1] !== 'number') {
+        if(typeof self[self.length - 1] === 'string') {
+            self[self.length - 1] = undefined;
+        }
+        if(typeof self[i+1] !== 'number' && typeof self[i+1] === 'string') {
             let start = i, end = i;
             while(typeof self[end] === 'string') {
                 end++;
-                console.log(end);
             }
             while(start < (end - 1)) {
                 self[start] = undefined;
                 start++;
             }
-            i = end;
-            console.log("end " + end);
+            i = (end - 1);
             continue;
         }
         i += 3;
@@ -83,7 +84,7 @@ Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
     for (let i = 0; i < this.length; i++) {
         let path = this[i];
         
-        for (let j = 0; j < path.length; j+=2) {
+        for (let j = 1; j < path.length; j+=2) {
             let p1 = new Object(), p2 = new Object();
             p1.lat = path[j+1];
             p1.lon = path[j];
@@ -97,7 +98,7 @@ Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
                     continue;
                 }
                 else {
-                    for (let l = 0; l < path2.length; l+=2) {
+                    for (let l = 1; l < path2.length; l+=2) {
                         let p3 = new Object(), p4 = new Object();
                         p3.lat = path2[l+1];
                         p3.lon = path2[l];
@@ -117,8 +118,7 @@ Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
                                                     newIntersection.lon))
                                > .1) {
                                 lastIntersection = newIntersection;
-//                                matchesArray.push(path[0] + i + path2[0] + k);
-//                                matchesArray.push(parseFloat(lastIntersection.lat.toFixed(5)), parseFloat(lastIntersection.lon.toFixed(5)));
+                                matchesArray.push(path[0] + i + path2[0] + k);
                                 matchesArray.push(lastIntersection.lat, lastIntersection.lon);
                             }
                         }
