@@ -12,11 +12,15 @@ function fetchXml() { //Fetches the XML path coordinate
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
-            discretePaths(this);
+            main(this);
         }
     };
     xmlhttp.open("GET", "bike-paths.xml", true);
     xmlhttp.send();
+}
+
+function main(xml) {
+    console.log(discretePaths(xml));
 }
 
 function discretePaths(xml) { //Parses the XML, returns an array of arrays 
@@ -36,22 +40,28 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
             s = parseFloat(s);
             return s;
             });
-        coordinateArray[0] = pathType;
+        coordinateArray.unshift(pathType);
         coordinateArray.pop(); //Removing "NaN"
         pathsArray[i] = coordinateArray;
     }
-    console.log(pathsArray);
-    let intersectionsArray = pathsArray.findIntersections()/*.filterDuplicates().removeExtraStrings().filterDuplicates();*/
-    console.log(intersectionsArray);
-//    let test = ["q",5,5,"q","q","q","q","rr",5,5,"q",5,5,"q","q",5,5,"q"];
-//    let test2 = test.removeExtraStrings();
-//    console.log(test2);
-//    console.log(test == test2);
+//    console.log(pathsArray);
+    let intersectionsArray = pathsArray.findIntersections().filterDuplicates();
+    return intersectionsArray;
+}
+
+function computeDistances() {
+    let intersectionsArray = discretePaths(xml);
+//    for (let i = 0; i < intersectionsArray.length; i +=3) {
+//        let str = intersectionsArray[i];
+//       
+//    }
 }
 
 Array.prototype.removeExtraStrings = function() {
     let self = this;
+    console.log(self[-1]);
     for (let i = 0; i < self.length;) {
+//        debugger;
         if(typeof self[self.length - 1] === 'string') {
             self[self.length - 1] = undefined;
         }
@@ -72,20 +82,37 @@ Array.prototype.removeExtraStrings = function() {
     return self;
 }
 
+Array.prototype.nodes = function() {
+    let self = this;
+}
 
 Array.prototype.filterDuplicates = function() {
     let self = this, returnArray;
-    returnArray = Array.from(new Set(self))
+    
+    for(let i = 0; i < self.length; i += 3) {
+        debugger;
+        let indexOfMatch = self.indexOf(self[i + 1], (i + 3)); //returns -1?
+        if (indexOfMatch !== -1 && self[i + 2] === self[indexOfMatch + 1]) {
+            returnArray = self.splice((indexOfMatch - 1), 3);
+        }
+    }
+    
     return returnArray;
 }
 
+//Array.prototype.filterDuplicates = function() {
+//    let self = this, returnArray;
+//    returnArray = Array.from(new Set(self))
+//    return returnArray;
+//}
+
 Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
     let matchesArray = [], lastIntersection; //Last match
+    let p1 = new Object(), p2 = new Object(),
+        p3 = new Object(), p4 = new Object();
     for (let i = 0; i < this.length; i++) {
         let path = this[i];
-        
-        for (let j = 1; j < path.length; j+=2) {
-            let p1 = new Object(), p2 = new Object();
+        for (let j = 1; j < path.length; j += 2) {
             p1.lat = path[j+1];
             p1.lon = path[j];
             p2.lat = path[j+3];
@@ -94,12 +121,11 @@ Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
             for (let k = 0; k < this.length; k++) {
                 let path2 = this[k];
                 
-                if (k == i) {
+                if (k === i) {
                     continue;
                 }
                 else {
                     for (let l = 1; l < path2.length; l+=2) {
-                        let p3 = new Object(), p4 = new Object();
                         p3.lat = path2[l+1];
                         p3.lon = path2[l];
                         p4.lat = path2[l+3];
@@ -118,7 +144,7 @@ Array.prototype.findIntersections = function() {//DEATH BY FOR LOOPS
                                                     newIntersection.lon))
                                > .1) {
                                 lastIntersection = newIntersection;
-                                matchesArray.push(path[0] + i + path2[0] + k);
+                                matchesArray.push([path[0] + i + "-" + j + ", " + path2[0] + k + "-" + l]);
                                 matchesArray.push(lastIntersection.lat, lastIntersection.lon);
                             }
                         }
