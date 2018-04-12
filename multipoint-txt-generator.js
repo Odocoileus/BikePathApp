@@ -57,22 +57,44 @@ function computeDistances() {
 Array.prototype.nodes = function(paths) {
     let self = this;
     
-    for(let i = 0; i < paths.length; i++) {
-        for(let j = 0; j < self.length; j++) {
-            let searchPath;
-            if(self[j].path1PathIndex === i || self[j].path2PathIndex === i){
-                if(self[j].path1PathIndex !== i) { 
+    for(let i = 0; i < paths.length; i++) { //increment for paths
+        for(let j = 0; j < self.length; j++) {//increment for searching objects
+            let searchPath, searchIndex, matchIndex, negativeBest, positiveBest,
+                negativeBestIndex = Infinity, positiveBestIndex = Infinity;
+            if(self[j].path1PathIndex === i ||
+               self[j].path2PathIndex === i) {//if object contains path being
+                //searched
+                if(self[j].path1PathIndex !== i) {//whichever is not the path being searched
+                    if(self[j].path1PathIndex < i) { continue; }//don't want the same node logged twice
                     searchPath = self[j].path1PathIndex;
                     searchIndex = self[j].path1CoordIndex;
                 }
                 if(self[j].path2PathIndex !== i) {
+                    if(self[j].path2PathIndex < i) { continue; }
                     searchPath = self[j].path2PathIndex;
                     searchIndex = self[j].path2CoordIndex;
                 }
-                for(let k = searchIndex, l = searchIndex; k < paths[searchPath].length ||
-                    l < paths[searchPath].length; k++, l--) {
-                    
-                }
+                for(let k = 0; k < self.length; k++) {
+                    if(self[k].path1PathIndex === searchPath || //finding objects with same path
+                       self[k].path2PathIndex === searchPath) {
+                        if(self[k].path1PathIndex === searchPath) { 
+                            matchIndex = self[j].path1CoordIndex;
+                        }
+                        if(self[k].path2PathIndex === searchPath) {//whichever IS path being searched
+                            matchIndex = self[j].path2CoordIndex;
+                        }
+                        let difference = (searchIndex - matchIndex);//difference in number of indices
+                        if(difference < 0 && Math.abs(difference) < Math.abs(negativeBest)) { 
+                            negativeBest = difference;
+                            negativeBestIndex = matchIndex;
+                        }
+                        if(difference > 0 && difference < positiveBest) {
+                            positiveBest = difference;
+                            positiveBestIndex = matchIndex;
+                        }
+                    }
+                }//three
+                self[j]. //needs to add the pointer to the next object and distance to it if either one exists (!= infinity)
             }
         }//two
     }//one
