@@ -59,8 +59,9 @@ Array.prototype.nodes = function(paths) {
     
     for(let i = 0; i < paths.length; i++) { //increment for paths
         for(let j = 0; j < self.length; j++) {//increment for searching objects
-            let searchPath, searchIndex, matchIndex, negativeBest, positiveBest,
-                negativeBestIndex = Infinity, positiveBestIndex = Infinity;
+            let searchPath, searchIndex, matchIndex, negativeBest = Infinity, positiveBest = Infinity,
+                negativeBestIndex, positiveBestIndex, 
+                intersectObjectIndex1, intersectObjectIndex2;
             if(self[j].path1PathIndex === i ||
                self[j].path2PathIndex === i) {//if object contains path being
                 //searched
@@ -78,26 +79,48 @@ Array.prototype.nodes = function(paths) {
                     if(self[k].path1PathIndex === searchPath || //finding objects with same path
                        self[k].path2PathIndex === searchPath) {
                         if(self[k].path1PathIndex === searchPath) { 
-                            matchIndex = self[j].path1CoordIndex;
+                            matchIndex = self[k].path1CoordIndex;
                         }
                         if(self[k].path2PathIndex === searchPath) {//whichever IS path being searched
-                            matchIndex = self[j].path2CoordIndex;
+                            matchIndex = self[k].path2CoordIndex;
                         }
+//                        debugger;
                         let difference = (searchIndex - matchIndex);//difference in number of indices
-                        if(difference < 0 && Math.abs(difference) < Math.abs(negativeBest)) { 
+                        if((difference < 0) && (Math.abs(difference) < Math.abs(negativeBest))) { 
                             negativeBest = difference;
                             negativeBestIndex = matchIndex;
+                            intersectObjectIndex1 = k;
                         }
-                        if(difference > 0 && difference < positiveBest) {
+                        if((difference > 0) && (difference < positiveBest)) {
                             positiveBest = difference;
                             positiveBestIndex = matchIndex;
+                            intersectObjectIndex2 = k;
                         }
                     }
                 }//three
-                self[j]. //needs to add the pointer to the next object and distance to it if either one exists (!= infinity)
+                if(negativeBest !== Infinity && positiveBest !== Infinity) {
+                    self[j].pointer1 = {
+                        objIndex: intersectObjectIndex1
+                    }
+                    self[j].pointer2 = {
+                        objIndex: intersectObjectIndex2
+                    }
+                    
+                }
+                if(negativeBest !== Infinity) {
+                    self[j].pointer1 = {
+                        objIndex: intersectObjectIndex1
+                    }
+                }
+                if(positiveBest !== Infinity) {
+                    self[j].pointer1 = {
+                        objIndex: intersectObjectIndex2
+                    }
+                }
             }
         }//two
     }//one
+    return self;
 }
 
 Array.prototype.filterDuplicates = function() {
