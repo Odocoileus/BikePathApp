@@ -12,7 +12,7 @@ function fetchXml() { //Fetches the XML path coordinate file.
             main(this);
         }
     };
-    xmlhttp.open("GET", "bike-paths.xml", true);
+    xmlhttp.open("GET", "moreintersections.xml", true);
     xmlhttp.send();
 }
 
@@ -46,12 +46,23 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
     return intersectionsArray;
 }
 
-function computeDistances() {
-    let intersectionsArray = discretePaths(xml);
-//    for (let i = 0; i < intersectionsArray.length; i +=3) {
-//        let str = intersectionsArray[i];
-//       
-//    }
+function sumDistance(object1, startPath, startIndex, endPath, endIndex, object2, paths) {
+    debugger;
+    console.log(paths[startPath][startIndex + 1], paths[startPath][startIndex], object1.intersection)
+    console.log(object2.intersection,paths[endPath][endIndex + 1],paths[endPath][endIndex]);
+    let sum, 
+        intersection1 = object1.intersection,
+        intersection2 = object2.intersection,
+        intersectionToFirstIndex = getDistance(intersection1.lat, intersection1.lon,
+                                               paths[startPath][startIndex + 1], 
+                                               paths[startPath][startIndex]),
+        intersectionToLastIndex = getDistance(intersection2.lat, intersection2.lon,
+                                              paths[endPath][endIndex + 1],
+                                              paths[endPath][endIndex]);
+    
+    for(let start = startIndex, end = endIndex; startIndex < endIndex; startIndex += 2) {
+        
+    }
 }
 
 Array.prototype.nodes = function(paths) {
@@ -59,30 +70,41 @@ Array.prototype.nodes = function(paths) {
     
     for(let i = 0; i < paths.length; i++) { //increment for paths
         for(let j = 0; j < self.length; j++) {//increment for searching objects
-            let searchPath, searchIndex, matchIndex, negativeBest = Infinity, positiveBest = Infinity,
-                negativeBestIndex, positiveBestIndex, 
-                intersectObjectIndex1, intersectObjectIndex2;
+//            debugger;
+            let searchPath,
+                matchPath,
+                searchIndex,
+                matchIndex, 
+                negativeBest = Infinity,
+                positiveBest = Infinity,
+                negativeBestIndex,
+                positiveBestIndex, 
+                intersectObjectIndex1,
+                intersectObjectIndex2,
+                negativeDistance,
+                positiveDistance;
             if(self[j].path1PathIndex === i ||
                self[j].path2PathIndex === i) {//if object contains path being
                 //searched
                 if(self[j].path1PathIndex !== i) {//whichever is not the path being searched
-                    if(self[j].path1PathIndex < i) { continue; }//don't want the same node logged twice
                     searchPath = self[j].path1PathIndex;
                     searchIndex = self[j].path1CoordIndex;
                 }
                 if(self[j].path2PathIndex !== i) {
-                    if(self[j].path2PathIndex < i) { continue; }
                     searchPath = self[j].path2PathIndex;
                     searchIndex = self[j].path2CoordIndex;
                 }
                 for(let k = 0; k < self.length; k++) {
+//                    debugger;
                     if(self[k].path1PathIndex === searchPath || //finding objects with same path
                        self[k].path2PathIndex === searchPath) {
                         if(self[k].path1PathIndex === searchPath) { 
                             matchIndex = self[k].path1CoordIndex;
+                            matchPath = self[k].path1PathIndex;
                         }
                         if(self[k].path2PathIndex === searchPath) {//whichever IS path being searched
                             matchIndex = self[k].path2CoordIndex;
+                            matchPath = self[k].path2PathIndex;
                         }
 //                        debugger;
                         let difference = (searchIndex - matchIndex);//difference in number of indices
@@ -90,29 +112,33 @@ Array.prototype.nodes = function(paths) {
                             negativeBest = difference;
                             negativeBestIndex = matchIndex;
                             intersectObjectIndex1 = k;
+                            negativeDistance = sumDistance(self[i], searchPath, searchIndex, matchPath, negativeBestIndex, self[k], paths);
                         }
                         if((difference > 0) && (difference < positiveBest)) {
                             positiveBest = difference;
                             positiveBestIndex = matchIndex;
                             intersectObjectIndex2 = k;
+                            positiveDistance =  sumDistance(self[i], searchPath, searchIndex, matchPath, positiveBestIndex, self[k], paths);
                         }
                     }
                 }//three
                 if(negativeBest !== Infinity && positiveBest !== Infinity) {
                     self[j].pointer1 = {
-                        objIndex: intersectObjectIndex1
+                        objIndex: intersectObjectIndex1,
+//                        distance: negativeDistance
                     }
                     self[j].pointer2 = {
-                        objIndex: intersectObjectIndex2
+                        objIndex: intersectObjectIndex2,
+//                        distance: positiveDistance
                     }
                     
                 }
-                if(negativeBest !== Infinity) {
+                if(negativeBest !== Infinity && self[j].pointer1 === undefined) {
                     self[j].pointer1 = {
                         objIndex: intersectObjectIndex1
                     }
                 }
-                if(positiveBest !== Infinity) {
+                if(positiveBest !== Infinity && self[j].pointer1 === undefined) {
                     self[j].pointer1 = {
                         objIndex: intersectObjectIndex2
                     }
@@ -120,7 +146,7 @@ Array.prototype.nodes = function(paths) {
             }
         }//two
     }//one
-    return self;
+    console.log(self);
 }
 
 Array.prototype.filterDuplicates = function() {
