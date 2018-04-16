@@ -46,23 +46,66 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
     return intersectionsArray;
 }
 
-function sumDistance(object1, startPath, startIndex, endPath, endIndex, object2, paths) {
-    debugger;
-    console.log(paths[startPath][startIndex + 1], paths[startPath][startIndex], object1.intersection)
-    console.log(object2.intersection,paths[endPath][endIndex + 1],paths[endPath][endIndex]);
+function sumDistance(object1, object2, path) {
     let sum, 
         intersection1 = object1.intersection,
         intersection2 = object2.intersection,
-        intersectionToFirstIndex = getDistance(intersection1.lat, intersection1.lon,
-                                               paths[startPath][startIndex + 1], 
-                                               paths[startPath][startIndex]),
-        intersectionToLastIndex = getDistance(intersection2.lat, intersection2.lon,
-                                              paths[endPath][endIndex + 1],
-                                              paths[endPath][endIndex]);
-    
-    for(let start = startIndex, end = endIndex; startIndex < endIndex; startIndex += 2) {
-        
+        intersectionDistance = getDistance(intersection1.lat, intersection1.lon,
+                                           intersection2.lat, intersection2.lon),
+        intersectionToFirstIndex,
+        intersectionToLastIndex,
+        startIndex,
+        endIndex,
+        matchi,
+        matchj;
+    for(let i = 1; i < path.length; i+=2) {//getting a point between the two intersections
+//        debugger;
+        if(getDistance(path[i+1], path[i], intersection1.lat, intersection1.lon) < intersectionDistance &&
+           getDistance(path[i+1], path[i], intersection2.lat, intersection2.lon) < intersectionDistance) { 
+            matchi = new Object();
+            matchi.lat = path[i+1];
+            matchi.lon = path[i];
+//            matchi.matchIndex = i;
+            return;
+        }
     }
+    for(let j = (path.length - 1); j > 3; j-=2) {
+//        debugger;
+        if(getDistance(path[j], path[j-1], intersection1.lat, intersection1.lon) < intersectionDistance &&
+           getDistance(path[j], path[j-1], intersection2.lat, intersection2.lon) < intersectionDistance) {
+            matchj = new Object();
+            matchj.lat = path[j];
+            matchj.lon = path[j-1];
+            return;
+//            matchj.matchIndex = j;
+
+        }
+    }
+    let combo1 = getDistance(matchi.lat, matchi.lon, intersection1.lat, intersection1.lon),
+        combo2 = getDistance(matchi.lat, matchi.lon, intersection2.lat, intersection2.lon),
+        combo3 = getDistance(matchj.lat, matchj.lon, intersection1.lat, intersection1.lon),
+        combo4 = getDistance(matchj.lat, matchj.lon, intersection2.lat, intersection2.lon);
+    if(combo1 < combo2) { //Finding the distance from each intersection to the path 
+        //index it it is closest to
+        intersectionToFirstIndex = combo1;
+    }
+    if(combo2 < combo1) {
+        intersectionToFirstIndex = combo2;
+    }
+    if(combo3 < combo4) {
+        intersectionToLastIndex = combo3;
+    }
+    if(combo4 < combo3) {
+        intersectionToLastIndex = combo4;
+    }
+    
+    
+    for(let k = matchi.matchIndex; k < matchj.matchIndex; k+=2) {
+        sum += getDistance(path[k+1], path[k], path[k+3], path[k+2]);
+    }
+    
+    sum += (intersectionToFirstIndex + intersectionToLastIndex);
+    return sum;
 }
 
 Array.prototype.nodes = function(paths) {
@@ -112,16 +155,17 @@ Array.prototype.nodes = function(paths) {
                             negativeBest = difference;
                             negativeBestIndex = matchIndex;
                             intersectObjectIndex1 = k;
-                            negativeDistance = sumDistance(self[i], searchPath, searchIndex, matchPath, negativeBestIndex, self[k], paths);
+                            negativeDistance = sumDistance(self[j], self[k], paths[matchPath]);
                         }
                         if((difference > 0) && (difference < positiveBest)) {
                             positiveBest = difference;
                             positiveBestIndex = matchIndex;
                             intersectObjectIndex2 = k;
-                            positiveDistance =  sumDistance(self[i], searchPath, searchIndex, matchPath, positiveBestIndex, self[k], paths);
+                            positiveDistance =  sumDistance(self[j], self[k], paths[matchPath]);
                         }
                     }
                 }//three
+//                debugger;
                 if(negativeBest !== Infinity && positiveBest !== Infinity) {
                     self[j].pointer1 = {
                         objIndex: intersectObjectIndex1,
