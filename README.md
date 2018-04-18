@@ -9,4 +9,4 @@ still provide directions even if the route is not safe. My goal is to alert user
 and allow them to be able to choose the type of route they feel most comfortable using.
 
 Notes about the files:
-Xml-parser will eventually live on the client side. Multipoint-txt-generator is a script that will run in Node for each update to the path data XML file, providing the graph that xml-parser uses to find the shortest path to the destination
+Xml-parser will eventually live on the client side. Multipoint-txt-generator is a script that will run in Node for each update to the path data XML file, providing the graph that xml-parser uses to find the shortest path to the destination.
