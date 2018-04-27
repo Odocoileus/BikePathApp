@@ -42,7 +42,7 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
         pathsArray[i] = coordinateArray;
     }
 //    console.log(pathsArray);
-    let intersectionsArray = pathsArray.findIntersections().filterDuplicates().nodes(pathsArray);
+    let intersectionsArray = pathsArray.findIntersections().filterDuplicates().samePathNodes(pathsArray);
     return intersectionsArray;
 }
 
@@ -110,12 +110,79 @@ function sumDistance(object1, object2, path) {
     return sum;
 }
 
+Array.prototype.samePathNodes = function(paths) {
+    let self = this;
+    
+    for(let i = 0; i < paths.length; i++) {
+        
+        let intersectionObjectArray = [];
+        for(let j = 0; j < self.length; j++) { //adding objects with same path
+            if(self[j].path1PathIndex === i ||
+               self[j].path2PathIndex === i) {
+                let temporaryObject = self[j];
+                temporaryObject.index = j;
+                intersectionObjectArray.push(temporaryObject);
+            }
+        }
+        
+        let coordIndexA,
+            coordIndexB;
+        intersectionObjectArray.sort(function(a, b) { //sorting by coordinate index (least to greatest)
+            if(a.path1PathIndex === i) { coordIndexA = a.path1CoordIndex; }
+            if(a.path2PathIndex === i) { coordIndexA = a.path2CoordIndex; }
+            if(b.path1PathIndex === i) { coordIndexB = b.path1CoordIndex; }
+            if(b.path2PathIndex === i) { coordIndexB = b.path2CoordIndex; }
+            
+            if(coordIndexA < coordIndexB) { return -1; }
+            if(coordIndexA > coordIndexB) { return 1; }
+            return 0;
+        });
+        for(let k = 0; k < intersectionObjectArray.length; k++) {
+            if(intersectionObjectArray[k+1] !== undefined &&
+               intersectionObjectArray[k-1] !== undefined) {
+                self[intersectionObjectArray[k].index].ownPointer1 = {
+                    objIndex: intersectionObjectArray[k+1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k+1], 
+                                          paths[i])
+                }
+                self[intersectionObjectArray[k].index].ownPointer2 = {
+                    objIndex: intersectionObjectArray[k-1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k-1], 
+                                          paths[i])
+                }
+            }
+            if(intersectionObjectArray[k+1] !== undefined) {
+                debugger;
+                self[intersectionObjectArray[k].index].ownPointer1 = {
+                    objIndex: intersectionObjectArray[k+1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k+1], 
+                                          paths[i])
+                }
+                debugger;
+            }
+            if(intersectionObjectArray[k-1] !== undefined) {
+                self[intersectionObjectArray[k].index].ownPointer1 = {
+                    objIndex: intersectionObjectArray[k-1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k-1], 
+                                          paths[i])
+                }
+            }
+        }
+    }
+    console.log(self);
+}
+
 Array.prototype.nodes = function(paths) {
     let self = this;
     
     for(let i = 0; i < paths.length; i++) { //increment for paths
         for(let j = 0; j < self.length; j++) {//increment for searching objects
-//            debugger;
+            
+//            if(j === 3) {debugger;}
             let searchPath,
                 searchIndex,
                 matchPath,
@@ -138,35 +205,29 @@ Array.prototype.nodes = function(paths) {
                self[j].path2PathIndex === i) {//if object contains path being
                 //searched
 //                debugger;
-                if(self[j].path1PathIndex === i) { ownSearchIndex = self[j].path1CoordIndex; }
-                if(self[j].path2PathIndex === i) { ownSearchIndex = self[j].path2CoordIndex }
-                
-                for(let g = 0; g < self.length; g++) { //finding closest intersections on own path
-//                    debugger;
-                    if(self[g].path1PathIndex === i) { ownMatchIndex = self[g].path1CoordIndex; }
-                    if(self[g].path2PathIndex === i) { ownMatchIndex = self[g].path2CoordIndex; }
-                    
-//                    if(self[g].path1PathIndex === i) {
-//                        ownSearchIndex = self[g].path1CoordIndex;
+//                if(self[j].path1PathIndex === i) { ownSearchIndex = self[j].path1CoordIndex; }
+//                if(self[j].path2PathIndex === i) { ownSearchIndex = self[j].path2CoordIndex }
+//                
+//                for(let g = 0; g < self.length; g++) { //finding closest intersections on own path
+////                    debugger;
+//                    if(self[g].path1PathIndex === i) { ownMatchIndex = self[g].path1CoordIndex; }
+//                    if(self[g].path2PathIndex === i) { ownMatchIndex = self[g].path2CoordIndex; }
+//                    
+//                    let difference = (ownSearchIndex - ownMatchIndex);
+//                    if((difference < 0) && (Math.abs(difference) < Math.abs(ownNegativeBest))) { 
+//                        ownNegativeBest = difference;
+//                        ownIntersectObjectIndex1 = g;
+////                            debugger;
+//                        ownNegativeDistance = sumDistance(self[j], self[g], paths[i]);
 //                    }
-//                    if(self[g].path2PathIndex === i) {
-//                        ownSearchIndex = self[g].path2CoordIndex;
-//                    }
-                    let difference = (ownSearchIndex - ownMatchIndex);
-                    if((difference < 0) && (Math.abs(difference) < Math.abs(ownNegativeBest))) { 
-                        ownNegativeBest = difference;
-                        ownIntersectObjectIndex1 = g;
-//                            debugger;
-                        ownNegativeDistance = sumDistance(self[j], self[g], paths[i]);
-                    }
-                    if((difference > 0) && (difference < ownPositiveBest)) {
-                        ownPositiveBest = difference;
-                        ownIntersectObjectIndex2 = g;
-//                            debugger;
-                        ownPositiveDistance =  sumDistance(self[j], self[g], paths[i]);
-                    }  
-                }
-                
+//                    if((difference > 0) && (difference < ownPositiveBest)) {
+//                        ownPositiveBest = difference;
+//                        ownIntersectObjectIndex2 = g;
+////                            debugger;
+//                        ownPositiveDistance =  sumDistance(self[j], self[g], paths[i]);
+//                    }  
+//                }
+//                
                 if(self[j].path1PathIndex !== i) {//whichever is not the path being searched
                     searchPath = self[j].path1PathIndex;
                     searchIndex = self[j].path1CoordIndex;
@@ -203,30 +264,30 @@ Array.prototype.nodes = function(paths) {
                         }
                     }
                 }//three
-                
-                if(ownNegativeBest !== Infinity && ownPositiveBest !== Infinity) { //FOR OWN PATH
-                    self[j].ownPointer1 = {
-                        objIndex: ownIntersectObjectIndex1,
-                        distance: ownNegativeDistance
-                    }
-                    self[j].ownPointer2 = {
-                        objIndex: ownIntersectObjectIndex2,
-                        distance: ownPositiveDistance
-                    }
-                }
-                if(ownNegativeBest !== Infinity && self[j].ownPointer1) {
-                    self[j].ownPointer1 = {
-                        objIndex: ownIntersectObjectIndex1,
-                        distance: ownNegativeDistance
-                    }
-                }
-                if(ownPositiveBest !== Infinity && self[j].ownPointer1) {
-                    self[j].ownPointer1 = {
-                        objIndex: ownIntersectObjectIndex2,
-                        distance: ownPositiveDistance
-                    }
-                }
-                
+//                if(j === 3) {debugger;}
+//                if(ownNegativeBest !== Infinity && ownPositiveBest !== Infinity) { //FOR OWN PATH
+//                    self[j].ownPointer1 = {
+//                        objIndex: ownIntersectObjectIndex1,
+//                        distance: ownNegativeDistance
+//                    }
+//                    self[j].ownPointer2 = {
+//                        objIndex: ownIntersectObjectIndex2,
+//                        distance: ownPositiveDistance
+//                    }
+//                }
+//                if(ownNegativeBest !== Infinity && self[j].ownPointer1 === undefined) {
+//                    self[j].ownPointer1 = {
+//                        objIndex: ownIntersectObjectIndex1,
+//                        distance: ownNegativeDistance
+//                    }
+//                }
+//                if(ownPositiveBest !== Infinity && self[j].ownPointer1 === undefined) {
+//                    self[j].ownPointer1 = {
+//                        objIndex: ownIntersectObjectIndex2,
+//                        distance: ownPositiveDistance
+//                    }
+//                }
+//                
                 
                 if(negativeBest !== Infinity && positiveBest !== Infinity) { //FOR OTHER PATH
                     self[j].pointer1 = {
