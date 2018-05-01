@@ -1,0 +1,16 @@
+{
+  "name": "write-graph-json",
+  "version": "1.0.0",
+  "description": "A script that parses the paths XML into a graph of nodes and distances",
+  "main": "multipoint-txt-generator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsdom": "^11.10.0",
+    "xmldom": "^0.1.27",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
