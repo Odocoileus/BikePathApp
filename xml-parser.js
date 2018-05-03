@@ -44,6 +44,7 @@ function returnMatch(xml, lat1, lon1, maxDistance) { //Parses the XML, finds
         //Since Google Maps exports KML with longitude first on each pair,
         //the coordinate array is accessed "backwards".
     }
+    console.log(distanceArray);
     let minDistance = Math.min.apply(Math, distanceArray);//Smallest distance.
     let minDistanceIndex = distanceArray.indexOf(Math.min.apply(Math, 
                                                  distanceArray));//Index of 

@@ -10,7 +10,7 @@
         <Icon>
           <href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
         </Icon>
-        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
       </IconStyle>
       <LabelStyle>
         <scale>0</scale>
@@ -26,7 +26,7 @@
         <Icon>
           <href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href>
         </Icon>
-        <hotSpot x="16" xunits="pixels" y="32" yunits="insetPixels"/>
+        <hotSpot x="32" xunits="pixels" y="64" yunits="insetPixels"/>
       </IconStyle>
       <LabelStyle>
         <scale>1</scale>
@@ -74,14 +74,14 @@
       </Pair>
     </StyleMap>
     <Folder>
-      <name>bike-friendly</name>
+      <name>Directions from 575-599 Ponce De Leon Ave NE, Atlanta, GA 30308, USA to 200-272 Glen Iris Dr NE, Atlanta, GA 30312, USA</name>
       <Placemark>
-        <name>Directions from Glen Iris Start to 200-272 Glen Iris Dr NE, Atlanta, GA 30312, USA</name>
+        <name>Directions from 575-599 Ponce De Leon Ave NE, Atlanta, GA 30308, USA to 200-272 Glen Iris Dr NE, Atlanta, GA 30312, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
           <tessellate>1</tessellate>
           <coordinates>
-            -84.36764,33.7734,0
+            -84.36762,33.7735,0
             -84.36765,33.77337,0
             -84.36766,33.77287,0
             -84.36767,33.77267,0
@@ -112,11 +112,11 @@
         </LineString>
       </Placemark>
       <Placemark>
-        <name>Glen Iris Start</name>
+        <name>575-599 Ponce De Leon Ave NE, Atlanta, GA 30308, USA</name>
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3676407,33.7734043,0
+            -84.3676234,33.7735011,0
           </coordinates>
         </Point>
       </Placemark>
@@ -397,9 +397,9 @@
       </Placemark>
     </Folder>
     <Folder>
-      <name>Directions from Point 1 to Point 2</name>
+      <name>Directions from Point 1 to 590 Bonaventure Ave NE, Atlanta, GA 30306, USA</name>
       <Placemark>
-        <name>Directions from Point 1 to Point 2</name>
+        <name>Directions from Point 1 to 590 Bonaventure Ave NE, Atlanta, GA 30306, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
           <tessellate>1</tessellate>
@@ -409,7 +409,9 @@
             -84.36098,33.77396,0
             -84.36098,33.77381,0
             -84.36099,33.7737,0
-            -84.36099,33.77331,0
+            -84.361,33.77122,0
+            -84.36101,33.77111,0
+            -84.36101,33.77056,0
           </coordinates>
         </LineString>
       </Placemark>
@@ -423,11 +425,11 @@
         </Point>
       </Placemark>
       <Placemark>
-        <name>Point 2</name>
+        <name>590 Bonaventure Ave NE, Atlanta, GA 30306, USA</name>
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3609883,33.7733059,0
+            -84.361008,33.7705567,0
           </coordinates>
         </Point>
       </Placemark>
@@ -468,9 +470,9 @@
       </Placemark>
     </Folder>
     <Folder>
-      <name>Directions from Point 1 to Point 2</name>
+      <name>Directions from Point 1 to 923-937 North Avenue NE, Atlanta, GA 30306, USA</name>
       <Placemark>
-        <name>Directions from Point 1 to Point 2</name>
+        <name>Directions from Point 1 to 923-937 North Avenue NE, Atlanta, GA 30306, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
           <tessellate>1</tessellate>
@@ -496,7 +498,13 @@
             -84.36392,33.77113,0
             -84.36391,33.77113,0
             -84.36355,33.77113,0
-            -84.36322,33.77113,0
+            -84.36229,33.77113,0
+            -84.36166,33.77112,0
+            -84.36101,33.77111,0
+            -84.35953,33.77109,0
+            -84.3594,33.77109,0
+            -84.35924,33.77109,0
+            -84.35896,33.77108,0
           </coordinates>
         </LineString>
       </Placemark>
@@ -510,11 +518,11 @@
         </Point>
       </Placemark>
       <Placemark>
-        <name>Point 2</name>
+        <name>923-937 North Avenue NE, Atlanta, GA 30306, USA</name>
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3632197,33.77113,0
+            -84.3589612,33.7710838,0
           </coordinates>
         </Point>
       </Placemark>
