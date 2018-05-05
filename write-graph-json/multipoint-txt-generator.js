@@ -10,7 +10,7 @@ fetchXml();
 
 function fetchXml() { //Fetches the XML path coordinate file.
     let string = fs.readFileSync(path.resolve("C:\Users\Ryan\Desktop\Sites\Bike App",
-                                              "../../moreintersections.xml"), "utf8");
+                                              "../../bike-paths.xml"), "utf8");
     main(string);
 }
 
@@ -139,8 +139,8 @@ function nodes(paths, arr) {
         console.log(intersectionObjectArray);
         for(let k = 0; k < intersectionObjectArray.length; k++) {
             let objectIndex = intersectionObjectArray[k].index;
-            if(arr[objectIndex].ownPointer1 === undefined) {
-                arr[objectIndex].ownPointer1 = [];
+            if(arr[objectIndex].pointer === undefined) {
+                arr[objectIndex].pointer = [];
             }
             if(intersectionObjectArray[k+1] !== undefined) {
                 let pointer = {
@@ -149,7 +149,7 @@ function nodes(paths, arr) {
                                           intersectionObjectArray[k+1], 
                                           paths[i])
                 };
-                arr[objectIndex].ownPointer1.push(pointer);
+                arr[objectIndex].pointer.push(pointer);
             }
             if(intersectionObjectArray[k-1] !== undefined) {
                 let pointer = {
@@ -158,7 +158,7 @@ function nodes(paths, arr) {
                                           intersectionObjectArray[k-1], 
                                           paths[i])
                 };
-                arr[objectIndex].ownPointer1.push(pointer);
+                arr[objectIndex].pointer.push(pointer);
             }
         }
     }
