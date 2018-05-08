@@ -136,8 +136,7 @@ function nodes(paths, arr) {
             if(coordIndexA > coordIndexB) { return 1; }
             return 0;
         });
-        console.log(intersectionObjectArray);
-        for(let k = 0; k < intersectionObjectArray.length; k++) {
+        for(let k = 0; k < intersectionObjectArray.length; k++) {//Adding pointers for two closest neighbors
             let objectIndex = intersectionObjectArray[k].index;
             if(arr[objectIndex].pointer === undefined) {
                 arr[objectIndex].pointer = [];
