@@ -198,3 +198,77 @@ function dijkstra(graph) {
     console.log(visitedNodes);
 }
 
+function nodes(paths, arr) {
+    
+    for(let i = 0; i < paths.length; i++) {
+        
+        let intersectionObjectArray = [];
+        for(let j = 0; j < arr.length; j++) { //adding objects with same path
+            if(arr[j].path1PathIndex === i ||
+               arr[j].path2PathIndex === i) {
+                let temporaryObject = arr[j];
+                temporaryObject.index = j;
+                intersectionObjectArray.push(temporaryObject);
+            }
+        }
+        
+        let coordIndexA,
+            coordIndexB;
+        intersectionObjectArray.sort(function(a, b) { //sorting by coordinate index (least to greatest)
+            if(a.path1PathIndex === i) { coordIndexA = a.path1CoordIndex; }
+            if(a.path2PathIndex === i) { coordIndexA = a.path2CoordIndex; }
+            if(b.path1PathIndex === i) { coordIndexB = b.path1CoordIndex; }
+            if(b.path2PathIndex === i) { coordIndexB = b.path2CoordIndex; }
+            
+            if(coordIndexA < coordIndexB) { return -1; }
+            if(coordIndexA > coordIndexB) { return 1; }
+            return 0;
+        });
+        for(let k = 0; k < intersectionObjectArray.length; k++) {//Adding pointers for two closest neighbors
+            let objectIndex = intersectionObjectArray[k].index;
+            if(arr[objectIndex].pointer === undefined) {
+                arr[objectIndex].pointer = [];
+            }
+            if(intersectionObjectArray[k+1] !== undefined) {
+                let pointer = {
+                    objIndex: intersectionObjectArray[k+1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k+1], 
+                                          paths[i])
+                };
+                arr[objectIndex].pointer.push(pointer);
+            }
+            if(intersectionObjectArray[k-1] !== undefined) {
+                let pointer = {
+                    objIndex: intersectionObjectArray[k-1].index,
+                    distance: sumDistance(intersectionObjectArray[k], 
+                                          intersectionObjectArray[k-1], 
+                                          paths[i])
+                };
+                arr[objectIndex].pointer.push(pointer);
+            }
+        }
+    }
+    return arr;
+}
+
+function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
+    //return distance from point specified from each point on specified path
+    Number.prototype.toRad = function() {
+    return this * Math.PI / 180;
+    }
+    
+    const R = 6371; //Radius of earth in km
+    let x1 = lat2-lat1;
+    let dLat = x1.toRad();  
+    let x2 = lon2-lon1;
+    let dLon = x2.toRad();  
+    let a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+        Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);  
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    let distance = R * c; 
+    return distance; //Distance between points(km)
+}
+
+

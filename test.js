@@ -45,46 +45,101 @@ function parseXml(xml, lat, lon) { //Parses the XML, finds
 //                    ", " + intersectionsArray[i].intersection.lon);
 //    }
     intersectionsArray = nodes(pathsArray, intersectionsArray);
-    groups(intersectionsArray);
+    closestGrouping(groups(intersectionsArray), pathsArray);
     console.log(intersectionsArray);
     return intersectionsArray;
 }
 
-function closestGrouping(groupsArray) {
+function closestByWalking(withinRange, lat, lon) {
+    for(let i = 0; i < withinRange.length; i+=2) {
+        debugger;
+        let urlString = 
+            "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=",
+            origine = (lat.toString() + "," + lon.toString());
+    }
+}
+
+function closestGrouping(pathIndexArray, paths) {
     //This function allows separated groups of nodes to be connected with
     //edges. If a user reaches a point where they must walk, this function
     //finds the nearest point by walking.
+    let sum = 0;
+    for(let i = 0; i < pathIndexArray.length; i++) {
+//        debugger;
+        for(let m = 0; m < pathIndexArray[i].length; m++) {
+//            debugger;
+            let path = paths[pathIndexArray[i][m]],
+                withinRange = [],
+                lat,
+                lon;
+            for(let j = 1; j < path.length; j+=6) { 
+                lat = path[j+1];
+                lon = path[j];
+                //Every 3rd coordinate on path
+                for(let k = 0; k < paths.length; k++) {
+                    if(pathIndexArray[i].indexOf(k) !== -1) {
+//                        debugger;
+                        continue;
+                    }
+                    for(let l = 1; l < paths[k].length; l+=2) {
+                        let distance = getDistance(lat, lon,
+                                                   paths[k][l+1],
+                                                   paths[k][l]);
+                        if(distance < 5) {
+                            console.log(distance);
+                            withinRange.push(paths[k][l+1], paths[k][l]);
+                        }
+                    }
+                }
+            }
+            closestByWalking(withinRange, lat, lon);
+        }
+    }
+    console.log(sum);
 }
 
 function groups(graph/*Graph given by nodes()*/) {
-    debugger;
+//    debugger;
     let groups = [],
         visitedPaths = [],
         returnArray = [];
     for(let i = 0; i < graph.length; i++) {
-        let visited = new Set(visitedPaths);
+        let visited = new Set(visitedPaths),
+            visitedPathsToAdd = [];
         if(visited.has(graph[i].path1PathIndex) ||
           visited.has(graph[i].path2PathIndex)) { continue; }
         let start = graph[i].index,
             group = dijkstra(graph, start);
-        debugger;
+//        debugger;
         for(let j = 0; j < group.visited.length; j++) {
             let graphIndex = group.visited[j];
+            visitedPathsToAdd.push(graph[graphIndex].path1PathIndex);
             visitedPaths.push(graph[graphIndex].path1PathIndex);
             if(graph[graphIndex].path2PathIndex !== undefined) {
+                visitedPathsToAdd.push(graph[graphIndex].path2PathIndex);
                 visitedPaths.push(graph[graphIndex].path2PathIndex);
             }
         }
         groups.push(group);
-        visitedPaths = new Set(visitedPaths);//Removing duplicates
-        visitedPaths = Array.from(visitedPaths);//Converting back to array
-        returnArray.push(visitedPaths);
+        visitedPathsToAdd = new Set(visitedPathsToAdd);//Removing duplicates
+        visitedPathsToAdd = Array.from(visitedPathsToAdd);//Converting back to array
+        returnArray.push(visitedPathsToAdd);
     }
-    debugger;
+    return returnArray;
 }
 
+//function groups(graph) {
+//    let visitedPaths = [],
+//        groups = [];
+//    for(let i = 0; i < graph.length; i++) {
+//        
+//    }
+//}
+
 function sumDistance(object1, object2, path) {
-    debugger;
+//    if(object1.path1CoordIndex === 157) {
+//        debugger;
+//    }
     let sum, 
         intersection1 = object1.intersection,
         intersection2 = object2.intersection,
@@ -131,12 +186,6 @@ function sumDistance(object1, object2, path) {
 
         }
     }
-    if(matchi === undefined || matchj === undefined) {
-        debugger;
-    }
-    if(intersection1 === undefined || intersection2 === undefined) {
-        debugger;
-    }
     let combo1 = getDistance(matchi.lat, matchi.lon, intersection1.lat, intersection1.lon),
         combo2 = getDistance(matchi.lat, matchi.lon, intersection2.lat, intersection2.lon),
         combo3 = getDistance(matchj.lat, matchj.lon, intersection1.lat, intersection1.lon),
@@ -156,9 +205,7 @@ function sumDistance(object1, object2, path) {
     }
     
     sum = (intersectionToFirstIndex + intersectionToLastIndex);
-//    debugger;
-    for(let k = matchi.matchIndex; k < matchj.matchIndex; k+=2) {
-        debugger;
+    for(let k = matchi.matchIndex; k < (matchj.matchIndex - 2); k+=2) {
         let add = getDistance(path[k+1], path[k], path[k+3], path[k+2]);
         sum += add;
     }
@@ -166,7 +213,6 @@ function sumDistance(object1, object2, path) {
 }
 
 function dijkstra(graph, start/*, pathTypeArray*/) {
-//    debugger;
     let currentNode, 
         nextNode,
         visitedNodes = [],
@@ -179,9 +225,6 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
         graph[i].totalDistance = Infinity;
     }
     graph[start].totalDistance = 0;
-//    start.totalDistance = 0;
-//    end.totalDistance = Infinity;
-//    debugger;
     for(let k = 0; k < graph.length; k++) {
         let shortestEdge = Infinity;
         if(k == 0) { 
@@ -194,7 +237,6 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
         else if(nextNode.pointer.length === 1 &&
                 visitedNodes.indexOf(nextNode.pointer[0].objIndex) !== -1 &&
                visitedNodes.indexOf(nextNode.index) !== -1) {
-//            debugger;
             loop1: //This is similar to a "GOTO" in other languages.
             for(let i = visitedNodes.length;
                 i > 0; i--) {
@@ -210,7 +252,6 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
                             shortestCandidate = graphPointer[j].distance;
                             shortestCandidateIndex = j;
                             triggered = true;
-//                        break loop1;
                         }
                     }
                     else if(j === (graphPointer.length - 1) && triggered === false) {
@@ -291,7 +332,7 @@ function nodes(paths, arr) {
             if(arr[objectIndex].pointer === undefined) {
                 arr[objectIndex].pointer = [];
             }
-            debugger;
+//            debugger;
             if(intersectionObjectArray[k+1] !== undefined) {
                 let pointer = {
                     objIndex: intersectionObjectArray[k+1].index,
@@ -302,7 +343,7 @@ function nodes(paths, arr) {
                 arr[objectIndex].pointer.push(pointer);
             }
             if(intersectionObjectArray[k-1] !== undefined) {
-                debugger;
+//                debugger;
                 let pointer = {
                     objIndex: intersectionObjectArray[k-1].index,
                     distance: sumDistance(intersectionObjectArray[k], 

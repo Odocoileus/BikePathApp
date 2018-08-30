@@ -46,6 +46,34 @@ function discretePaths(xml) { //Parses the XML, returns an array of arrays
     return intersectionsArray;
 }
 
+function closestGrouping(groupsArray) {
+    //This function allows separated groups of nodes to be connected with
+    //edges. If a user reaches a point where they must walk, this function
+    //finds the nearest point by walking.
+}
+
+function groups(graph/*Graph given by nodes()*/) {
+    debugger;
+    let groups = [],
+        visitedPaths = [];
+    for(let i = 0; i < graph.length; i++) {
+        let start = graph[i].objIndex,
+            group = dijkstra(graph, start),
+            visitedPathsToAdd = [];
+        for(let j = 0; j < group.visited.length; j++) {
+            visitedPathsToAdd.push(group.visited[j].path1PathIndex);
+            if(group.visited[j].path2PathIndex !== undefined) {
+                visitedPathsToAdd.push(group.visited[j].path2PathIndex);
+            }
+        }
+        groups.push(group);
+        visitedPaths.push(visitedPathsToAdd);
+    }
+    visitedPaths = visitedPaths.flat();
+    visitedPaths = new Set(visitedPaths);//Removing duplicates
+    visitedPaths = visitedPaths.toArray();//Converting back to array
+}
+
 function sumDistance(object1, object2, path) {
     let sum, 
         intersection1 = object1.intersection,
@@ -58,11 +86,19 @@ function sumDistance(object1, object2, path) {
         endIndex,
         matchi,
         matchj;
+    if(intersectionDistance < .1) {
+//        debugger;
+        return intersectionDistance;
+    }
     for(let i = 1; i < path.length; i+=2) {//getting two points between the two intersections
 //        debugger;
-        if(getDistance(path[i+1], path[i], intersection1.lat, intersection1.lon) < intersectionDistance &&
-           getDistance(path[i+1], path[i], intersection2.lat, intersection2.lon) < intersectionDistance &&
-          matchi === undefined) { 
+        let point1Distance = getDistance(path[i+1], path[i], intersection1.lat, intersection1.lon),
+            point2Distance = getDistance(path[i+1], path[i], intersection2.lat, intersection2.lon);
+//        debugger;
+        if((point1Distance < intersectionDistance || point1Distance === 0) &&
+           (point2Distance < intersectionDistance || point2Distance === 0) &&
+           matchi === undefined) {
+//            debugger;
             matchi = new Object();
             matchi.lat = path[i+1];
             matchi.lon = path[i];
@@ -71,15 +107,25 @@ function sumDistance(object1, object2, path) {
     }
     for(let j = (path.length - 1); j > 0; j-=2) {
 //        debugger;
-        if(getDistance(path[j], path[j-1], intersection1.lat, intersection1.lon) < intersectionDistance &&
-           getDistance(path[j], path[j-1], intersection2.lat, intersection2.lon) < intersectionDistance &&
-          matchj === undefined) {
+        let point1Distance = getDistance(path[j], path[j-1], intersection1.lat, intersection1.lon),
+            point2Distance = getDistance(path[j], path[j-1], intersection2.lat, intersection2.lon);
+//        debugger;
+        if((point1Distance < intersectionDistance || point1Distance === 0) &&
+           (point2Distance < intersectionDistance || point2Distance === 0) &&
+           matchj === undefined) {
+//            debugger;
             matchj = new Object();
             matchj.lat = path[j];
             matchj.lon = path[j-1];
             matchj.matchIndex = j;
 
         }
+    }
+    if(typeof(matchi) === 'undefined' || typeof(matchj) === 'undefined') {
+        debugger;
+    }
+    if(typeof(intersection1.lat) === 'undefined' || typeof(intersection2.lat) === 'undefined') {
+        debugger;
     }
     let combo1 = getDistance(matchi.lat, matchi.lon, intersection1.lat, intersection1.lon),
         combo2 = getDistance(matchi.lat, matchi.lon, intersection2.lat, intersection2.lon),
@@ -113,12 +159,11 @@ function sumDistance(object1, object2, path) {
 function nodes(paths, arr) {
     
     for(let i = 0; i < paths.length; i++) {
-        
         let intersectionObjectArray = [];
         for(let j = 0; j < arr.length; j++) { //adding objects with same path
             if(arr[j].path1PathIndex === i ||
                arr[j].path2PathIndex === i) {
-                let temporaryObject = arr[j];
+                let temporaryObject = arr[j]; //Is this necessary?
                 temporaryObject.index = j;
                 intersectionObjectArray.push(temporaryObject);
             }
@@ -141,6 +186,7 @@ function nodes(paths, arr) {
             if(arr[objectIndex].pointer === undefined) {
                 arr[objectIndex].pointer = [];
             }
+//            debugger;
             if(intersectionObjectArray[k+1] !== undefined) {
                 let pointer = {
                     objIndex: intersectionObjectArray[k+1].index,
@@ -165,16 +211,26 @@ function nodes(paths, arr) {
 }
 
 function filterDuplicates(arr) {
-    
-    for(let i = 0; i < arr.length; i += 3) {
-        let indexOfMatch = arr.indexOf(arr[i + 1], (i + 3));
-        if (indexOfMatch !== -1 && arr[i + 2] === arr[indexOfMatch + 1]) {
-            arr.splice((indexOfMatch - 1), 3);
+//    for(let i = 0; i < arr.length; i += 3) {
+//        let indexOfMatch = arr.indexOf(arr[i + 1], (i + 3));
+//        if (indexOfMatch !== -1 && arr[i + 2] === arr[indexOfMatch + 1]) {
+//            arr.splice((indexOfMatch - 1), 3);
+//        }
+//    }
+//    debugger;
+    for(let i = 1; i < arr.length; i += 3) {
+        for(let j = 1; j < arr.length; j += 3) {
+            if(j !== i && getDistance(arr[i], arr[i+1], arr[j], arr[j+1]) < .001) {
+//                debugger;
+                arr.splice((j - 1), 3);
+            }
         }
     }
+    
     for(let j = 1; j < arr.length; j++) {
         arr.splice(j, 2);
     }
+    console.log(arr);
     return arr;
 }
 
@@ -209,13 +265,16 @@ function findIntersections(paths) {//DEATH BY FOR LOOPS
                                 lastIntersection = newIntersection;
                                 continue;
                             }
-                            else if ((getDistance(
-                                                    lastIntersection.lat, 
+                            else if ((getDistance(lastIntersection.lat, 
                                                     lastIntersection.lon,
                                                     newIntersection.lat,
                                                     newIntersection.lon))
+                                     //Don't add intersections that may be the same.
                                > .1) {
+//                                debugger;
                                 lastIntersection = newIntersection;
+                                let intersection1 = parseFloat(lastIntersection.lat.toFixed(5));
+                                let intersection2 = parseFloat(lastIntersection.lon.toFixed(5));
                                 let matchObject = {
                                     path1Type: path[0],
                                     path1PathIndex: i,
@@ -224,10 +283,11 @@ function findIntersections(paths) {//DEATH BY FOR LOOPS
                                     path2PathIndex: k,
                                     path2CoordIndex: l,
                                     intersection: {
-                                        lat: lastIntersection.lat,
-                                        lon: lastIntersection.lon
+                                        lat: intersection1,
+                                        lon: intersection2
                                     }
                                 }
+//                                debugger;
                                 matchesArray.push(matchObject);
                                 matchesArray.push(lastIntersection.lat, lastIntersection.lon);
                             }
@@ -237,6 +297,34 @@ function findIntersections(paths) {//DEATH BY FOR LOOPS
             }//third
         }//second
     } //first 
+    for(let i = 0; i < paths.length; i++) { //Adding nodes to the beginning and end of the paths
+        let path = paths[i],
+            endIndex = (path.length - 1),
+            start = {
+                path1Type: path[0],
+                path1PathIndex: i,
+                path1CoordIndex: 1,
+                intersection: { //This is not a real intersection, but it is used as one later.
+                    lat: path[2],
+                    lon: path[1]
+                }
+            },
+            end = {
+                path1Type: path[0],
+                path1PathIndex: i,
+                path1CoordIndex: (endIndex - 1), //Lat-long is indexed backwards
+                intersection: { //This is not a real intersection, but it is used as one later.
+                    lat: path[endIndex],
+                    lon: path[endIndex-1]
+                }
+            }
+        matchesArray.push(start);
+        matchesArray.push(path[2], path[1]); //This is strictly to preserve the order of the 
+        //array so that the duplicate filtering function works. There will not be duplicates
+        //of these nodes, however.
+        matchesArray.push(end);
+        matchesArray.push(path[endIndex], path[endIndex-1]);
+    }
     return matchesArray;
 }
 
@@ -250,7 +338,10 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     Number.prototype.toRad = function () {
     return this * Math.PI / 180;
     }
-    
+    if(typeof(lat1) === 'undefined' || typeof(lat2) === 'undefined' ) {
+        console.trace();
+        return;
+    }
     const R = 6371; //Radius of earth in km
     let x1 = lat2-lat1;
     let dLat = x1.toRad();  

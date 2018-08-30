@@ -7,18 +7,26 @@
     "path2PathIndex": 5,
     "path2CoordIndex": 9,
     "intersection": {
-      "lat": 33.7711300001047,
-      "lon": -84.36770000011553
+      "lat": 33.77113,
+      "lon": -84.3677
     },
     "index": 0,
     "pointer": [
       {
+        "objIndex": 6,
+        "distance": 1.1465182209484641
+      },
+      {
         "objIndex": 2,
-        "distance": 0.34504698725043853
+        "distance": 0.34504682736973324
       },
       {
         "objIndex": 3,
-        "distance": 0.35109922714214736
+        "distance": 0.35146817969632976
+      },
+      {
+        "objIndex": 15,
+        "distance": 0.2385241677719685
       }
     ]
   },
@@ -30,18 +38,22 @@
     "path2PathIndex": 2,
     "path2CoordIndex": 117,
     "intersection": {
-      "lat": 33.77335308816053,
-      "lon": -84.36456826763118
+      "lat": 33.77335,
+      "lon": -84.36457
     },
     "index": 1,
     "pointer": [
       {
-        "objIndex": 2,
-        "distance": 0.341784164120784
+        "objIndex": 7,
+        "distance": 0.017541773257294405
       },
       {
         "objIndex": 3,
-        "distance": 0.27342567354320185
+        "distance": 0.27324278556883624
+      },
+      {
+        "objIndex": 9,
+        "distance": 1.9759275791852413
       }
     ]
   },
@@ -53,18 +65,22 @@
     "path2PathIndex": 0,
     "path2CoordIndex": 1,
     "intersection": {
-      "lat": 33.77350000010865,
-      "lon": -84.36762000184977
+      "lat": 33.7735,
+      "lon": -84.36762
     },
     "index": 2,
     "pointer": [
       {
         "objIndex": 0,
-        "distance": 0.34504698725043853
+        "distance": 0.34504682736973324
       },
       {
-        "objIndex": 1,
-        "distance": 0.341784164120784
+        "objIndex": 8,
+        "distance": 1.5076367943071336
+      },
+      {
+        "objIndex": 7,
+        "distance": 0.3499942750885219
       }
     ]
   },
@@ -76,22 +92,26 @@
     "path2PathIndex": 5,
     "path2CoordIndex": 37,
     "intersection": {
-      "lat": 33.77112997530391,
-      "lon": -84.36391399183714
+      "lat": 33.77113,
+      "lon": -84.36391
     },
     "index": 3,
     "pointer": [
       {
+        "objIndex": 10,
+        "distance": 2.2260981458487854
+      },
+      {
         "objIndex": 1,
-        "distance": 0.27342567354320185
+        "distance": 0.27324278556883624
       },
       {
         "objIndex": 5,
-        "distance": 0.4052621334138806
+        "distance": 0.32816628638567497
       },
       {
         "objIndex": 0,
-        "distance": 0.35109922714214736
+        "distance": 0.35146817969632976
       }
     ]
   },
@@ -103,14 +123,26 @@
     "path2PathIndex": 4,
     "path2CoordIndex": 3,
     "intersection": {
-      "lat": 33.77381000006771,
-      "lon": -84.36097999970494
+      "lat": 33.77381,
+      "lon": -84.36098
     },
     "index": 4,
     "pointer": [
       {
         "objIndex": 5,
-        "distance": 0.36145497243586183
+        "distance": 0.3125639176649013
+      },
+      {
+        "objIndex": 11,
+        "distance": 0.0600452603881588
+      },
+      {
+        "objIndex": 14,
+        "distance": 0.04529046602763789
+      },
+      {
+        "objIndex": 13,
+        "distance": 0.04529046602763789
       }
     ]
   },
@@ -122,18 +154,206 @@
     "path2PathIndex": 5,
     "path2CoordIndex": 45,
     "intersection": {
-      "lat": 33.77110999948115,
-      "lon": -84.36100999868711
+      "lat": 33.77111,
+      "lon": -84.36101
     },
     "index": 5,
     "pointer": [
       {
+        "objIndex": 12,
+        "distance": 0.06115720965416725
+      },
+      {
         "objIndex": 4,
-        "distance": 0.36145497243586183
+        "distance": 0.3125639176649013
+      },
+      {
+        "objIndex": 16,
+        "distance": 0.1313135790112436
       },
       {
         "objIndex": 3,
-        "distance": 0.4052621334138806
+        "distance": 0.32816628638567497
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 0,
+    "path1CoordIndex": 53,
+    "intersection": {
+      "lat": 33.76147,
+      "lon": -84.36784
+    },
+    "index": 6,
+    "pointer": [
+      {
+        "objIndex": 0,
+        "distance": 1.1465182209484641
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 1,
+    "path1CoordIndex": 1,
+    "intersection": {
+      "lat": 33.7734,
+      "lon": -84.36439
+    },
+    "index": 7,
+    "pointer": [
+      {
+        "objIndex": 2,
+        "distance": 0.3499942750885219
+      },
+      {
+        "objIndex": 1,
+        "distance": 0.017541773257294405
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 1,
+    "path1CoordIndex": 157,
+    "intersection": {
+      "lat": 33.77242,
+      "lon": -84.38331
+    },
+    "index": 8,
+    "pointer": [
+      {
+        "objIndex": 2,
+        "distance": 1.5076367943071336
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 2,
+    "path1CoordIndex": 1,
+    "intersection": {
+      "lat": 33.78184,
+      "lon": -84.37856
+    },
+    "index": 9,
+    "pointer": [
+      {
+        "objIndex": 1,
+        "distance": 1.9759275791852413
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 2,
+    "path1CoordIndex": 253,
+    "intersection": {
+      "lat": 33.75443,
+      "lon": -84.36554
+    },
+    "index": 10,
+    "pointer": [
+      {
+        "objIndex": 3,
+        "distance": 2.2260981458487854
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 3,
+    "path1CoordIndex": 1,
+    "intersection": {
+      "lat": 33.77435,
+      "lon": -84.36098
+    },
+    "index": 11,
+    "pointer": [
+      {
+        "objIndex": 4,
+        "distance": 0.0600452603881588
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 3,
+    "path1CoordIndex": 15,
+    "intersection": {
+      "lat": 33.77056,
+      "lon": -84.36101
+    },
+    "index": 12,
+    "pointer": [
+      {
+        "objIndex": 5,
+        "distance": 0.06115720965416725
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 4,
+    "path1CoordIndex": 1,
+    "intersection": {
+      "lat": 33.77381,
+      "lon": -84.36147
+    },
+    "index": 13,
+    "pointer": [
+      {
+        "objIndex": 4,
+        "distance": 0.04529046602763789
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 4,
+    "path1CoordIndex": 9,
+    "intersection": {
+      "lat": 33.77381,
+      "lon": -84.36049
+    },
+    "index": 14,
+    "pointer": [
+      {
+        "objIndex": 4,
+        "distance": 0.04529046602763789
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 5,
+    "path1CoordIndex": 1,
+    "intersection": {
+      "lat": 33.77116,
+      "lon": -84.36957
+    },
+    "index": 15,
+    "pointer": [
+      {
+        "objIndex": 0,
+        "distance": 0.2385241677719685
+      }
+    ]
+  },
+  {
+    "path1Type": "bp",
+    "path1PathIndex": 5,
+    "path1CoordIndex": 55,
+    "intersection": {
+      "lat": 33.77108,
+      "lon": -84.35896
+    },
+    "index": 16,
+    "pointer": [
+      {
+        "objIndex": 5,
+        "distance": 0.1313135790112436
       }
     ]
   }
