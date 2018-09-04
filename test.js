@@ -51,11 +51,20 @@ function parseXml(xml, lat, lon) { //Parses the XML, finds
 }
 
 function closestByWalking(withinRange, lat, lon) {
-    for(let i = 0; i < withinRange.length; i+=2) {
+    let withinRangeString = withinRange.toString(),
+        start = 1, //Initialized to 1 to allow slice to work on first character
+        end;
+    withinRangeString.replace(/,/g, "%2C"); //Replacing commas with encoding
+    let i = 0;
+    while(i < withinRangeString.length) {
         debugger;
         let urlString = 
-            "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=",
-            origine = (lat.toString() + "," + lon.toString());
+            "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=",
+            origin = (lat.toString() + "," + lon.toString()),
+            destinations = ('&destinations=' + withinRangeString.slice((start-1), (end+1))),
+            apiKey = '&key=AIzaSyCBKQWoEDz-XixB1fvP-fr7g-uwBB5N_WQ';
+        urlString += (origin + destinations + apiKey);
+        start = end;
     }
 }
 
@@ -63,13 +72,14 @@ function closestGrouping(pathIndexArray, paths) {
     //This function allows separated groups of nodes to be connected with
     //edges. If a user reaches a point where they must walk, this function
     //finds the nearest point by walking.
-    let sum = 0;
+    let sum = 0,
+        withinRange = [];
     for(let i = 0; i < pathIndexArray.length; i++) {
 //        debugger;
         for(let m = 0; m < pathIndexArray[i].length; m++) {
 //            debugger;
             let path = paths[pathIndexArray[i][m]],
-                withinRange = [],
+//                withinRange = [],
                 lat,
                 lon;
             for(let j = 1; j < path.length; j+=6) { 
@@ -81,21 +91,22 @@ function closestGrouping(pathIndexArray, paths) {
 //                        debugger;
                         continue;
                     }
+//                    withinRange.push(k);
                     for(let l = 1; l < paths[k].length; l+=2) {
+                        sum++;
                         let distance = getDistance(lat, lon,
                                                    paths[k][l+1],
                                                    paths[k][l]);
-                        if(distance < 5) {
-                            console.log(distance);
+                        if(distance < 2.5) {
+//                            console.log(distance);
                             withinRange.push(paths[k][l+1], paths[k][l]);
                         }
                     }
                 }
+                closestByWalking(withinRange, lat, lon);
             }
-            closestByWalking(withinRange, lat, lon);
-        }
+        } 
     }
-    console.log(sum);
 }
 
 function groups(graph/*Graph given by nodes()*/) {
