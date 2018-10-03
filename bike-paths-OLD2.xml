@@ -528,23 +528,13 @@
       </Placemark>
     </Folder>
     <Folder>
-      <name>Directions from 201 Ponce De Leon Ave NE, Atlanta, GA 30308, USA to 615 Cherry St NW, Atlanta, GA 30313, USA</name>
+      <name>Directions from 771 Piedmont Ave NE, Atlanta, GA 30308, USA to 615 Cherry St NW, Atlanta, GA 30313, USA</name>
       <Placemark>
-        <name>Directions from 201 Ponce De Leon Ave NE, Atlanta, GA 30308, USA to 615 Cherry St NW, Atlanta, GA 30313, USA</name>
+        <name>Directions from 771 Piedmont Ave NE, Atlanta, GA 30308, USA to 615 Cherry St NW, Atlanta, GA 30313, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
           <tessellate>1</tessellate>
           <coordinates>
-            -84.38171,33.7725,0
-            -84.38178,33.7725,0
-            -84.38171,33.77324,0
-            -84.38169,33.77346,0
-            -84.38168,33.77356,0
-            -84.38167,33.77364,0
-            -84.38166,33.77379,0
-            -84.38158,33.77456,0
-            -84.38157,33.77471,0
-            -84.38153,33.77513,0
             -84.38145,33.77595,0
             -84.38221,33.776,0
             -84.38296,33.77605,0
@@ -707,11 +697,11 @@
         </LineString>
       </Placemark>
       <Placemark>
-        <name>201 Ponce De Leon Ave NE, Atlanta, GA 30308, USA</name>
+        <name>771 Piedmont Ave NE, Atlanta, GA 30308, USA</name>
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3817087,33.7725047,0
+            -84.381447,33.7759469,0
           </coordinates>
         </Point>
       </Placemark>
@@ -800,9 +790,9 @@
       </Placemark>
     </Folder>
     <Folder>
-      <name>Directions from 327 10th St NW, Atlanta, GA 30318, USA to 275 Ferst Drive, Atlanta, GA 30313, USA</name>
+      <name>Directions from 327 10th St NW, Atlanta, GA 30318, USA to 275 Ferst Dr NW, Atlanta, GA 30313, USA</name>
       <Placemark>
-        <name>Directions from 327 10th St NW, Atlanta, GA 30318, USA to 275 Ferst Drive, Atlanta, GA 30313, USA</name>
+        <name>Directions from 327 10th St NW, Atlanta, GA 30318, USA to 275 Ferst Dr NW, Atlanta, GA 30313, USA</name>
         <styleUrl>#line-1267FF-5000-nodesc</styleUrl>
         <LineString>
           <tessellate>1</tessellate>
@@ -855,12 +845,7 @@
             -84.39687,33.77281,0
             -84.39688,33.77279,0
             -84.39692,33.77276,0
-            -84.39702,33.77266,0
-            -84.39712,33.77274,0
-            -84.39715,33.77272,0
-            -84.39717,33.7727,0
-            -84.39723,33.77264,0
-            -84.3973,33.77255,0
+            -84.397,33.77269,0
           </coordinates>
         </LineString>
       </Placemark>
@@ -874,11 +859,11 @@
         </Point>
       </Placemark>
       <Placemark>
-        <name>275 Ferst Drive, Atlanta, GA 30313, USA</name>
+        <name>275 Ferst Dr NW, Atlanta, GA 30313, USA</name>
         <styleUrl>#icon-1899-DB4436-nodesc</styleUrl>
         <Point>
           <coordinates>
-            -84.3973043,33.7725503,0
+            -84.3969953,33.7726877,0
           </coordinates>
         </Point>
       </Placemark>

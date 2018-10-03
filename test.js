@@ -11,7 +11,7 @@ function fetchXml() { //Fetches the XML path coordinate
             parseXml(this);
         }
     };
-    xmlhttp.open("GET", "bike-paths.xml", true);
+    xmlhttp.open('GET', 'bike-paths.xml', true);
     xmlhttp.send();
 }
 
@@ -20,60 +20,67 @@ function parseXml(xml, lat, lon) { //Parses the XML, finds
     //and nearest distance if user specifies, and returns the match(es).
     let xmlDoc = xml.responseXML;
     let coordinateArray;
-    let lineString = xmlDoc.getElementsByTagName("LineString");//The parent
-    //element of the "coordinates" element containing the path.
-    let pathTypeParent = xmlDoc.getElementsByTagName("Document");
+    let lineString = xmlDoc.getElementsByTagName('LineString');//The parent
+    //element of the 'coordinates' element containing the path.
+    let pathTypeParent = xmlDoc.getElementsByTagName('Document');
     let pathType = pathTypeParent[0].childNodes[1].innerHTML;
     let pathsArray = [];
     for(let i = 0; i < lineString.length; i++) {
         let coordinateString;//Add each path to a string
-        coordinateString = lineString[i].getElementsByTagName("coordinates")[0].innerHTML;
-        let normalizedString = coordinateString.replace(/,0/g, ",");//Replacing ",0"
-        coordinateArray = normalizedString.split(",").map(function(s) {
+        coordinateString = lineString[i].getElementsByTagName('coordinates')[0].innerHTML;
+        let normalizedString = coordinateString.replace(/,0/g, ',');//Replacing ',0'
+        coordinateArray = normalizedString.split(',').map(function(s) {
             s.trim();
             s = parseFloat(s);
             return s;
             });
         coordinateArray.unshift(pathType);
-        coordinateArray.pop(); //Removing "NaN"
+        coordinateArray.pop(); //Removing 'NaN'
         pathsArray[i] = coordinateArray;
     }
     let intersectionsArray = findIntersections(pathsArray);
     intersectionsArray = filterDuplicates(intersectionsArray);
-//    for(let i = 0; i < intersectionsArray.length; i++) {
-//        console.log(intersectionsArray[i].intersection.lat +
-//                    ", " + intersectionsArray[i].intersection.lon);
-//    }
     intersectionsArray = nodes(pathsArray, intersectionsArray);
     closestGrouping(groups(intersectionsArray), pathsArray);
     console.log(intersectionsArray);
     return intersectionsArray;
 }
 
-function closestByWalking(withinRange, lat, lon) {
-    let withinRangeString = withinRange.toString(),
-        start = 1, //Initialized to 1 to allow slice to work on first character
-        end;
-    withinRangeString.replace(/,/g, "%2C"); //Replacing commas with encoding
-    let i = 0;
-    while(i < withinRangeString.length) {
-        debugger;
-        let urlString = 
-            "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=",
-            origin = (lat.toString() + "," + lon.toString()),
-            destinations = ('&destinations=' + withinRangeString.slice((start-1), (end+1))),
-            apiKey = '&key=AIzaSyCBKQWoEDz-XixB1fvP-fr7g-uwBB5N_WQ';
-        urlString += (origin + destinations + apiKey);
-        start = end;
-    }
+function closestPoint() {
 }
 
-function closestGrouping(pathIndexArray, paths) {
+function closestPointsURLs(withinRange, lat, lon) {
+    let i = 0,
+        URLArray = [];
+    while(i < withinRange.length) {
+        let destinationLength = 0,
+            originString = (lat.toString() + ',' + lon.toString()),
+            originLength = origin.length,
+            destinationString = '&destinations=';
+        while((originLength + destinationLength) < (2048 - 136) &&
+             i < withinRange.length) {
+            let lat = withinRange[i].toString(),
+                lon = withinRange[i+1].toString();
+            destinationString += (lat + '%2C' + lon + '%7C');
+            destinationLength = destinationString.length;
+            i+=2;
+        }
+        destinationString = destinationString.slice(0, -3);//taking off extra '%7C'
+        let URLString = 'https://maps.googleapis.com/maps/api/distancematrix/j' +
+            'son?units=metric&origins=',
+        APIKeyString = '&mode=walking&key=AIzaSyCBKQWoEDz-XixB1fvP-fr7g-uwBB5N_WQ';
+        URLString += (originString + destinationString + APIKeyString);
+        URLArray.push(URLString);
+    }
+    console.log(URLArray);
+    return URLArray;
+}
+
+function closestGrouping(pathIndexArray, paths, graph) {
     //This function allows separated groups of nodes to be connected with
     //edges. If a user reaches a point where they must walk, this function
     //finds the nearest point by walking.
-    let sum = 0,
-        withinRange = [];
+    let sum = 0;
     for(let i = 0; i < pathIndexArray.length; i++) {
 //        debugger;
         for(let m = 0; m < pathIndexArray[i].length; m++) {
@@ -85,11 +92,15 @@ function closestGrouping(pathIndexArray, paths) {
             for(let j = 1; j < path.length; j+=6) { 
                 lat = path[j+1];
                 lon = path[j];
+                let withinRange = [];
                 //Every 3rd coordinate on path
                 for(let k = 0; k < paths.length; k++) {
                     if(pathIndexArray[i].indexOf(k) !== -1) {
 //                        debugger;
                         continue;
+                    }
+                    if(k === pathIndexArray[i][m]) {
+                        debugger;
                     }
 //                    withinRange.push(k);
                     for(let l = 1; l < paths[k].length; l+=2) {
@@ -103,7 +114,7 @@ function closestGrouping(pathIndexArray, paths) {
                         }
                     }
                 }
-                closestByWalking(withinRange, lat, lon);
+                closestPointsURLs(withinRange, lat, lon);
             }
         } 
     }
@@ -139,18 +150,7 @@ function groups(graph/*Graph given by nodes()*/) {
     return returnArray;
 }
 
-//function groups(graph) {
-//    let visitedPaths = [],
-//        groups = [];
-//    for(let i = 0; i < graph.length; i++) {
-//        
-//    }
-//}
-
 function sumDistance(object1, object2, path) {
-//    if(object1.path1CoordIndex === 157) {
-//        debugger;
-//    }
     let sum, 
         intersection1 = object1.intersection,
         intersection2 = object2.intersection,
@@ -248,7 +248,7 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
         else if(nextNode.pointer.length === 1 &&
                 visitedNodes.indexOf(nextNode.pointer[0].objIndex) !== -1 &&
                visitedNodes.indexOf(nextNode.index) !== -1) {
-            loop1: //This is similar to a "GOTO" in other languages.
+            loop1: //This is similar to a 'GOTO' in other languages.
             for(let i = visitedNodes.length;
                 i > 0; i--) {
                 let loopNodeIndex = visitedNodes[i-1],
@@ -280,8 +280,6 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
             currentNode = nextNode;
             visitedNodes.push(shortestNodeIndex);
         }
-        
-        
         for(let j = 0; j < currentNode.pointer.length; j++) {
             if(visitedNodes.indexOf(currentNode.pointer[j].objIndex) !== -1) { 
                 continue;
@@ -314,7 +312,6 @@ function dijkstra(graph, start/*, pathTypeArray*/) {
 }
 
 function nodes(paths, arr) {
-    
     for(let i = 0; i < paths.length; i++) {
         let intersectionObjectArray = [];
         for(let j = 0; j < arr.length; j++) { //adding objects with same path
@@ -369,13 +366,6 @@ function nodes(paths, arr) {
 }
 
 function filterDuplicates(arr) {
-//    for(let i = 0; i < arr.length; i += 3) {
-//        let indexOfMatch = arr.indexOf(arr[i + 1], (i + 3));
-//        if (indexOfMatch !== -1 && arr[i + 2] === arr[indexOfMatch + 1]) {
-//            arr.splice((indexOfMatch - 1), 3);
-//        }
-//    }
-//    debugger;
     for(let i = 1; i < arr.length; i += 3) {
         for(let j = 1; j < arr.length; j += 3) {
             if(j !== i && getDistance(arr[i], arr[i+1], arr[j], arr[j+1]) < .001) {
@@ -389,6 +379,7 @@ function filterDuplicates(arr) {
         arr.splice(j, 2);
     }
     console.log(arr);
+    console.trace();
     return arr;
 }
 
@@ -512,6 +503,15 @@ function getDistance(lat1, lon1, lat2, lon2) {//Uses Haversine function to
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     let distance = R * c; 
     return distance; //Distance between points(km)
+}
+
+function distanceMatrix(URLString) {
+    let xhr = new XMLHttpRequest();
+    xhr.open("GET", URLString);
+    xhr.onload = function() {
+        let distanceResponse = JSON.parse(xhr.response);
+        
+    }
 }
 
 function Turn(p1, p2, p3) {
